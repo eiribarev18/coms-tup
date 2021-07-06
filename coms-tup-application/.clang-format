@@ -1,0 +1,12 @@
+BasedOnStyle: Microsoft
+AllowShortBlocksOnASingleLine: 'true'
+AllowShortIfStatementsOnASingleLine: WithoutElse
+BreakBeforeBraces: Stroustrup
+IncludeBlocks: Regroup
+IndentCaseLabels: 'true'
+KeepEmptyLinesAtTheStartOfBlocks: 'false'
+Language: Cpp
+PointerAlignment: Right
+SpaceAfterTemplateKeyword: 'true'
+TabWidth: '4'
+UseTab: Always
