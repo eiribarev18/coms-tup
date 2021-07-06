@@ -1,12 +1,89 @@
+USE [coms-tup-db]
+GO
+ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [CK_Tasks_Status]
+GO
+ALTER TABLE [dbo].[WorkLogs] DROP CONSTRAINT [FK_WorkLogs_Users]
+GO
+ALTER TABLE [dbo].[WorkLogs] DROP CONSTRAINT [FK_WorkLogs_Tasks]
+GO
+ALTER TABLE [dbo].[UsersTeams] DROP CONSTRAINT [FK_UsersTeams_Users]
+GO
+ALTER TABLE [dbo].[UsersTeams] DROP CONSTRAINT [FK_UsersTeams_Teams]
+GO
+ALTER TABLE [dbo].[Users] DROP CONSTRAINT [FK_Users-LastChangedBy_Users]
+GO
+ALTER TABLE [dbo].[Users] DROP CONSTRAINT [FK_Users-CreatedBy_Users]
+GO
+ALTER TABLE [dbo].[TeamsProjects] DROP CONSTRAINT [FK_TeamsProjects_Teams]
+GO
+ALTER TABLE [dbo].[TeamsProjects] DROP CONSTRAINT [FK_TeamsProjects_Projects]
+GO
+ALTER TABLE [dbo].[Teams] DROP CONSTRAINT [FK_Teams-LastChangedBy_Users]
+GO
+ALTER TABLE [dbo].[Teams] DROP CONSTRAINT [FK_Teams-CreatedBy_Users]
+GO
+ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_Tasks-LastChangedBy_Users]
+GO
+ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_Tasks-CreatedBy_Users]
+GO
+ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_Tasks-AssigneeId_Users]
+GO
+ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_Tasks_Projects]
+GO
+ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [FK_Projects-LastChangedBy_Users]
+GO
+ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [FK_Projects-CreatedBy_Users]
+GO
+ALTER TABLE [dbo].[Users] DROP CONSTRAINT [DF_Users_IsAdmin]
+GO
+ALTER TABLE [dbo].[Users] DROP CONSTRAINT [DF_Users_CreatedOn]
+GO
+ALTER TABLE [dbo].[Teams] DROP CONSTRAINT [DF_Teams_CreatedOn]
+GO
+ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [DF_Tasks_CreatedOn]
+GO
+ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [DF_Projects_CreatedOn]
+GO
+/****** Object:  Table [dbo].[WorkLogs]    Script Date: 7/6/2021 9:29:41 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WorkLogs]') AND type in (N'U'))
+DROP TABLE [dbo].[WorkLogs]
+GO
+/****** Object:  Table [dbo].[UsersTeams]    Script Date: 7/6/2021 9:29:41 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UsersTeams]') AND type in (N'U'))
+DROP TABLE [dbo].[UsersTeams]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 7/6/2021 9:29:41 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND type in (N'U'))
+DROP TABLE [dbo].[Users]
+GO
+/****** Object:  Table [dbo].[TeamsProjects]    Script Date: 7/6/2021 9:29:41 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TeamsProjects]') AND type in (N'U'))
+DROP TABLE [dbo].[TeamsProjects]
+GO
+/****** Object:  Table [dbo].[Teams]    Script Date: 7/6/2021 9:29:41 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Teams]') AND type in (N'U'))
+DROP TABLE [dbo].[Teams]
+GO
+/****** Object:  Table [dbo].[Tasks]    Script Date: 7/6/2021 9:29:41 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Tasks]') AND type in (N'U'))
+DROP TABLE [dbo].[Tasks]
+GO
+/****** Object:  Table [dbo].[Projects]    Script Date: 7/6/2021 9:29:41 AM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Projects]') AND type in (N'U'))
+DROP TABLE [dbo].[Projects]
+GO
 USE [master]
 GO
-/****** Object:  Database [coms-tup-db]    Script Date: 2021-07-05 23:38:04 ******/
+/****** Object:  Database [coms-tup-db]    Script Date: 7/6/2021 9:29:41 AM ******/
+DROP DATABASE [coms-tup-db]
+GO
+/****** Object:  Database [coms-tup-db]    Script Date: 7/6/2021 9:29:41 AM ******/
 CREATE DATABASE [coms-tup-db]
  CONTAINMENT = NONE
  ON  PRIMARY 
-( NAME = N'coms-tup-db', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\coms-tup-db.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+( NAME = N'coms-tup-db', FILENAME = N'<PRFX>\coms-tup-db.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
  LOG ON 
-( NAME = N'coms-tup-db_log', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL15.SQLEXPRESS\MSSQL\DATA\coms-tup-db_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'coms-tup-db_log', FILENAME = N'<PRFX>\coms-tup-db_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
 GO
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
 begin
@@ -73,7 +150,7 @@ ALTER DATABASE [coms-tup-db] SET DELAYED_DURABILITY = DISABLED
 GO
 USE [coms-tup-db]
 GO
-/****** Object:  Table [dbo].[Projects]    Script Date: 2021-07-05 23:38:04 ******/
+/****** Object:  Table [dbo].[Projects]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -92,7 +169,7 @@ CREATE TABLE [dbo].[Projects](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tasks]    Script Date: 2021-07-05 23:38:04 ******/
+/****** Object:  Table [dbo].[Tasks]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -114,7 +191,7 @@ CREATE TABLE [dbo].[Tasks](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Teams]    Script Date: 2021-07-05 23:38:04 ******/
+/****** Object:  Table [dbo].[Teams]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -132,7 +209,22 @@ CREATE TABLE [dbo].[Teams](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 2021-07-05 23:38:04 ******/
+/****** Object:  Table [dbo].[TeamsProjects]    Script Date: 7/6/2021 9:29:41 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TeamsProjects](
+	[TeamId] [int] NOT NULL,
+	[ProjectId] [int] NOT NULL,
+ CONSTRAINT [PK_TeamsProjects] PRIMARY KEY CLUSTERED 
+(
+	[TeamId] ASC,
+	[ProjectId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -154,7 +246,22 @@ CREATE TABLE [dbo].[Users](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[WorkLogs]    Script Date: 2021-07-05 23:38:04 ******/
+/****** Object:  Table [dbo].[UsersTeams]    Script Date: 7/6/2021 9:29:41 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UsersTeams](
+	[UserId] [int] NOT NULL,
+	[TeamId] [int] NOT NULL,
+ CONSTRAINT [PK_UsersTeams] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC,
+	[TeamId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[WorkLogs]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -221,6 +328,16 @@ REFERENCES [dbo].[Users] ([Id])
 GO
 ALTER TABLE [dbo].[Teams] CHECK CONSTRAINT [FK_Teams-LastChangedBy_Users]
 GO
+ALTER TABLE [dbo].[TeamsProjects]  WITH CHECK ADD  CONSTRAINT [FK_TeamsProjects_Projects] FOREIGN KEY([ProjectId])
+REFERENCES [dbo].[Projects] ([Id])
+GO
+ALTER TABLE [dbo].[TeamsProjects] CHECK CONSTRAINT [FK_TeamsProjects_Projects]
+GO
+ALTER TABLE [dbo].[TeamsProjects]  WITH CHECK ADD  CONSTRAINT [FK_TeamsProjects_Teams] FOREIGN KEY([TeamId])
+REFERENCES [dbo].[Teams] ([Id])
+GO
+ALTER TABLE [dbo].[TeamsProjects] CHECK CONSTRAINT [FK_TeamsProjects_Teams]
+GO
 ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [FK_Users-CreatedBy_Users] FOREIGN KEY([CreatedBy])
 REFERENCES [dbo].[Users] ([Id])
 GO
@@ -230,6 +347,16 @@ ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [FK_Users-LastChangedBy_Us
 REFERENCES [dbo].[Users] ([Id])
 GO
 ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [FK_Users-LastChangedBy_Users]
+GO
+ALTER TABLE [dbo].[UsersTeams]  WITH CHECK ADD  CONSTRAINT [FK_UsersTeams_Teams] FOREIGN KEY([TeamId])
+REFERENCES [dbo].[Teams] ([Id])
+GO
+ALTER TABLE [dbo].[UsersTeams] CHECK CONSTRAINT [FK_UsersTeams_Teams]
+GO
+ALTER TABLE [dbo].[UsersTeams]  WITH CHECK ADD  CONSTRAINT [FK_UsersTeams_Users] FOREIGN KEY([UserId])
+REFERENCES [dbo].[Users] ([Id])
+GO
+ALTER TABLE [dbo].[UsersTeams] CHECK CONSTRAINT [FK_UsersTeams_Users]
 GO
 ALTER TABLE [dbo].[WorkLogs]  WITH CHECK ADD  CONSTRAINT [FK_WorkLogs_Tasks] FOREIGN KEY([TaskId])
 REFERENCES [dbo].[Tasks] ([Id])
