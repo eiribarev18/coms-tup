@@ -20,6 +20,11 @@ class User {
 	void setLastName(const std::string &lastName, int32_t changedBy);
 	void setAccessLevel(ACCESS_LEVEL accessLevel, int32_t changedBy);
 
+	std::string getUsername() const;
+	std::string getFirstName() const;
+	std::string getLastName() const;
+	ACCESS_LEVEL getAccessLevel() const;
+
   private:
 	std::string username;
 	std::string firstName;
