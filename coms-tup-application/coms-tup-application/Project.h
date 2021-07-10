@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <unordered_set>
 
 class Project {
   public:
@@ -21,8 +20,6 @@ class Project {
 	const int32_t createdBy;
 	std::string lastChangedOn;
 	std::string lastChangedBy;
-
-	std::unordered_set<int32_t> taskIDs;
 
 	void setName(const std::string &name);
 	void setDescription(const std::string &description);

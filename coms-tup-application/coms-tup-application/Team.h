@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <unordered_set>
 
 class Team {
   public:
@@ -18,8 +17,6 @@ class Team {
 	const int32_t createdBy;
 	std::string lastChangedOn;
 	int32_t lastChangedBy;
-
-	std::unordered_set<int32_t> memberIDs;
 
 	void setName(const std::string &name);
 
