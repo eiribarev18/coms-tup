@@ -20,7 +20,7 @@ class Task {
 	void setTitle(const std::string &title, int32_t changedBy);
 	void setDescription(const std::string &description, int32_t changedBy);
 	void setStatus(STATUS status, int32_t changedBy);
-	
+
 	int32_t getProjectID() const;
 	int32_t getAssigneeID() const;
 	std::string getTitle() const;
