@@ -22,3 +22,4 @@ jobs:
         with:
           # Source folder to check formatting
           source: ./coms-tup-application
+          clangFormatVersion: 11
