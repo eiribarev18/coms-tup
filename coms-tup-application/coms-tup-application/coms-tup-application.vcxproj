@@ -148,14 +148,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DBManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Project.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="Team.cpp" />
     <ClCompile Include="User.cpp" />
+    <ClCompile Include="utils.cpp" />
     <ClCompile Include="WorkLog.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DBManager.h" />
+    <ClInclude Include="env.h" />
     <ClInclude Include="Project.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="Team.h" />
