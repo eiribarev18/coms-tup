@@ -45,17 +45,17 @@ void User::setAccessLevel(ACCESS_LEVEL accessLevel, int32_t changedBy)
 	touch(*this, changedBy);
 }
 
-std::string User::getUsername() const
+string User::getUsername() const
 {
 	return username;
 }
 
-std::string User::getFirstName() const
+string User::getFirstName() const
 {
 	return firstName;
 }
 
-std::string User::getLastName() const
+string User::getLastName() const
 {
 	return lastName;
 }
@@ -65,17 +65,17 @@ User::ACCESS_LEVEL User::getAccessLevel() const
 	return accessLevel;
 }
 
-void User::setUsername(const std::string &username)
+void User::setUsername(const string &username)
 {
 	this->username = username;
 }
 
-void User::setFirstName(const std::string &firstName)
+void User::setFirstName(const string &firstName)
 {
 	this->firstName = firstName;
 }
 
-void User::setLastName(const std::string &lastName)
+void User::setLastName(const string &lastName)
 {
 	this->lastName = lastName;
 }
