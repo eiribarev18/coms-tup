@@ -25,7 +25,7 @@ void Team::setName(const string &name, int32_t changedBy)
 
 string Team::getName() const
 {
-	return std::string();
+	return name;
 }
 
 void Team::setName(const string &name)
