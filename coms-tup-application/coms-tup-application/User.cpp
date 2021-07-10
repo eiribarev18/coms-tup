@@ -4,14 +4,14 @@
 
 using namespace std;
 
-User::User(int32_t createdBy) : createdBy(createdBy), createdOn("2022-02-22")
+User::User(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate(false)), db(db)
 {
 	touch(*this, createdBy);
 }
 
 User::User(const string &username, const string &firstName, const string &lastName, int32_t createdBy,
-		   ACCESS_LEVEL accessLevel) :
-	createdBy(createdBy), createdOn("2022-02-22")
+		   ACCESS_LEVEL accessLevel, DBManager &db) :
+	createdBy(createdBy), createdOn(db.getDate(false)), db(db)
 {
 	touch(*this, createdBy);
 

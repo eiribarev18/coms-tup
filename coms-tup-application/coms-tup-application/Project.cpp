@@ -4,13 +4,13 @@
 
 using namespace std;
 
-Project::Project(int32_t createdBy) : createdBy(createdBy), createdOn("2022-02-22")
+Project::Project(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate(false)), db(db)
 {
 	touch(*this, createdBy);
 }
 
-Project::Project(const string &name, const string &description, int32_t createdBy) :
-	createdBy(createdBy), createdOn("2022-02-22")
+Project::Project(const string &name, const string &description, int32_t createdBy, DBManager &db) :
+	createdBy(createdBy), createdOn(db.getDate(false)), db(db)
 {
 	touch(*this, createdBy);
 

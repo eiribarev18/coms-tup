@@ -1,5 +1,7 @@
 #pragma once
 
+#include "DBManager.h"
+
 #include <string>
 
 class Task {
@@ -11,9 +13,9 @@ class Task {
 		COMPLETE
 	};
 
-	Task(int32_t createdBy);
+	Task(int32_t createdBy, DBManager &db);
 	Task(int32_t projectID, int32_t assigneeID, const std::string &title, const std::string &description, STATUS status,
-		 int32_t createdBy);
+		 int32_t createdBy, DBManager &db);
 
 	void setProjectID(int32_t projectID, int32_t changedBy);
 	void setAssigneeID(int32_t assigneeID, int32_t changedBy);
@@ -28,6 +30,7 @@ class Task {
 	STATUS getStatus() const;
 
   private:
+	DBManager &db;
 	int32_t projectID;
 	int32_t assigneeID;
 	std::string title;

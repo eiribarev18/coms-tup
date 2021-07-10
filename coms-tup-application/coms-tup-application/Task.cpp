@@ -2,14 +2,14 @@
 
 #include "utils.h"
 
-Task::Task(int32_t createdBy) : createdBy(createdBy), createdOn("2022-02-22")
+Task::Task(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate(false)), db(db)
 {
 	touch(*this, createdBy);
 }
 
 Task::Task(int32_t projectID, int32_t assigneeID, const std::string &title, const std::string &description,
-		   STATUS status, int32_t createdBy) :
-	createdBy(createdBy), createdOn("2022-02-22")
+		   STATUS status, int32_t createdBy, DBManager &db) :
+	createdBy(createdBy), createdOn(db.getDate(false)), db(db)
 {
 	touch(*this, createdBy);
 

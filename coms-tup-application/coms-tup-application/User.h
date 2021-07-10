@@ -1,6 +1,8 @@
 #pragma once
 
-#include <iostream>
+#include "DBManager.h"
+
+#include <string>
 
 class User {
   public:
@@ -11,9 +13,9 @@ class User {
 		ROOT_ADMIN
 	};
 
-	User(int32_t createdBy);
+	User(int32_t createdBy, DBManager &db);
 	User(const std::string &username, const std::string &firstName, const std::string &lastName, int32_t createdBy,
-		 ACCESS_LEVEL accessLevel = ACCESS_LEVEL::USER);
+		 ACCESS_LEVEL accessLevel, DBManager &db);
 
 	void setUsername(const std::string &username, int32_t changedBy);
 	void setFirstName(const std::string &firstName, int32_t changedBy);
@@ -26,6 +28,7 @@ class User {
 	ACCESS_LEVEL getAccessLevel() const;
 
   private:
+	DBManager &db;
 	std::string username;
 	std::string firstName;
 	std::string lastName;

@@ -4,12 +4,13 @@
 
 using namespace std;
 
-Team::Team(int32_t createdBy) : createdBy(createdBy), createdOn("2022-02-22")
+Team::Team(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate(false)), db(db)
 {
 	touch(*this, createdBy);
 }
 
-Team::Team(const string &name, int32_t createdBy) : createdBy(createdBy), createdOn("2022-02-22")
+Team::Team(const string &name, int32_t createdBy, DBManager &db) :
+	createdBy(createdBy), createdOn(db.getDate(false)), db(db)
 {
 	touch(*this, createdBy);
 
