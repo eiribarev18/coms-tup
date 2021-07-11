@@ -291,6 +291,40 @@ bool DBManager::update(const Task &task)
 	return true;
 }
 
+bool DBManager::update(const Team &team)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			UPDATE Teams
+			SET
+				[Name] = ?,
+				LastChangedOn = ?,
+				LastChangedBy = ?
+			WHERE Id = ?;
+		)"));
+
+		const auto &bindTemp0 = team.getName();
+		auto bindTemp1 = team.getLastChangedOn();
+		auto bindTemp2 = team.getLastChangedBy();
+		auto bindTemp3 = team.getID();
+
+		statement.bind(0, bindTemp0.c_str());
+		statement.bind(1, &bindTemp1);
+		statement.bind(2, &bindTemp2);
+		statement.bind(3, &bindTemp3);
+
+		statement.execute();
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return false;
+	}
+
+	return true;
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);
