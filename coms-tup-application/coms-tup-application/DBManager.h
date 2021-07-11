@@ -37,6 +37,7 @@ class DBManager {
 	Task getByID(Task &task, int32_t id);
 	Team getByID(Team &team, int32_t id);
 	User getByID(User &user, int32_t id);
+	WorkLog getByID(WorkLog &workLog, int32_t id);
 
 	nanodbc::timestamp getDate(bool includeTime = false);
 

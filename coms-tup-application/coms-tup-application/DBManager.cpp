@@ -722,6 +722,39 @@ User DBManager::getByID(User &user, int32_t id)
 	}
 }
 
+WorkLog DBManager::getByID(WorkLog &workLog, int32_t id)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			SELECT
+				TaskId,
+				UserId,
+				[Date],
+				HoursSpent
+			FROM WorkLogs
+			WHERE Id = ?;
+		)"));
+
+		statement.bind(0, &id);
+
+		auto resSet = statement.execute();
+		if (!resSet.next()) return workLog;
+
+		auto taskID = resSet.get<int32_t>(0);
+		auto userID = resSet.get<int32_t>(1);
+		auto date = resSet.get<nanodbc::timestamp>(2);
+		auto hoursSpent = (int8_t)resSet.get<int>(3);
+
+		return {*this, id, taskID, userID, date, hoursSpent};
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return workLog;
+	}
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);

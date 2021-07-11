@@ -5,6 +5,11 @@ WorkLog::WorkLog(int32_t taskID, int32_t userID, int8_t hoursSpent, DBManager &d
 {
 }
 
+WorkLog::WorkLog(DBManager &db, int32_t id, int32_t taskID, int32_t userID, nanodbc::timestamp date, int8_t hoursSpent):
+	db(db), id(id), taskID(taskID), userID(userID), date(date), hoursSpent(hoursSpent)
+{
+}
+
 int32_t WorkLog::getID() const
 {
 	return id;

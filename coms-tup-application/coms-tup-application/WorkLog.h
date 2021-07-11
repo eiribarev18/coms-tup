@@ -23,4 +23,9 @@ class WorkLog {
 	const int32_t userID;
 	const nanodbc::timestamp date;
 	const int8_t hoursSpent;
+
+	// DB Constructor
+	WorkLog(DBManager &db, int32_t id, int32_t taskID, int32_t userID, nanodbc::timestamp date, int8_t hoursSpent);
+
+	friend class DBManager;
 };
