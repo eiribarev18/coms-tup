@@ -29,8 +29,13 @@ class Team {
 	nanodbc::timestamp lastChangedOn;
 	int32_t lastChangedBy;
 
+	// DB Constructor
+	Team(DBManager &db, int32_t id, const std::string &name, nanodbc::timestamp createdOn, int32_t createdBy,
+		 nanodbc::timestamp lastChangedOn, int32_t lastChangedBy);
+
 	void setName(const std::string &name);
 
 	template <typename T>
 	friend void touch(T &, int32_t);
+	friend class DBManager;
 };

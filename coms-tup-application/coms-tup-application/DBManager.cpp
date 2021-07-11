@@ -643,6 +643,43 @@ Task DBManager::getByID(Task &task, int32_t id)
 	}
 }
 
+Team DBManager::getByID(Team &team, int32_t id)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			SELECT
+				Id,
+				[Name],
+				CreatedOn,
+				CreatedBy,
+				LastChangedOn,
+				LastChangedBy
+			FROM Teams
+			WHERE Id = ?;
+		)"));
+
+		statement.bind(0, &id);
+
+		auto resSet = statement.execute();
+		if (!resSet.next()) return team;
+
+		auto id = resSet.get<int32_t>(0);
+		const auto &name = resSet.get<string>(1);
+		auto createdOn = resSet.get<nanodbc::timestamp>(2);
+		auto createdBy = resSet.get<int32_t>(3);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(4);
+		auto lastChangedBy = resSet.get<int32_t>(5);
+
+		return {*this, id, name, createdOn, createdBy, lastChangedOn, lastChangedBy};
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return team;
+	}
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);

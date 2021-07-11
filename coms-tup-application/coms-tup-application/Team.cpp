@@ -17,6 +17,18 @@ Team::Team(const string &name, int32_t createdBy, DBManager &db) :
 	setName(name);
 }
 
+Team::Team(DBManager &db, int32_t id, const std::string &name, nanodbc::timestamp createdOn, int32_t createdBy,
+		   nanodbc::timestamp lastChangedOn, int32_t lastChangedBy) :
+	db(db),
+	id(id),
+	name(name),
+	createdOn(createdOn),
+	createdBy(createdBy),
+	lastChangedOn(lastChangedOn),
+	lastChangedBy(lastChangedBy)
+{
+}
+
 void Team::setName(const string &name, int32_t changedBy)
 {
 	touch(*this, changedBy);
