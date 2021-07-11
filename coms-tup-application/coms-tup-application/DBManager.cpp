@@ -18,10 +18,32 @@ bool DBManager::insert(const Project &project)
 
 		nanodbc::prepare(statement, NANODBC_TEXT(R"(
 			INSERT INTO Projects
-				(
+				([Name], [Description], CreatedOn, CreatedBy, LastChangedOn, LastChangedBy)
+			VALUES
+				(?, ?, ?, ?, ?, ?);
 		)"));
+
+		const auto &bindTemp0 = project.getName();
+		const auto &bindTemp1 = project.getDescription();
+		auto bindTemp2 = project.getCreatedOn();
+		auto bindTemp3 = project.getCreatedBy();
+		auto bindTemp4 = project.getLastChangedOn();
+		auto bindTemp5 = project.getLastChangedBy();
+
+		statement.bind(0, bindTemp0.c_str());
+		if (bindTemp1.size())
+			statement.bind(1, bindTemp1.c_str());
+		else
+			statement.bind_null(1);
+		statement.bind(2, &bindTemp2);
+		statement.bind(3, &bindTemp3);
+		statement.bind(4, &bindTemp4);
+		statement.bind(5, &bindTemp5);
+
+		statement.execute();
 	}
 	catch (exception &e) {
+		cerr << e.what() << endl;
 		return false;
 	}
 
