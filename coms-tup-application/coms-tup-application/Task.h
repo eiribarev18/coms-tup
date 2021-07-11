@@ -49,6 +49,11 @@ class Task {
 	nanodbc::timestamp lastChangedOn;
 	int32_t lastChangedBy;
 
+	// DB Constructor
+	Task(DBManager &db, int32_t id, int32_t projectID, int32_t assigneeID, const std::string &title,
+		 const std::string &description, STATUS status, nanodbc::timestamp createdOn, int32_t createdBy,
+		 nanodbc::timestamp lastChangedOn, int32_t lastChangedBy);
+
 	void setProjectID(int32_t projectID);
 	void setAssigneeID(int32_t assigneeID);
 	void setTitle(const std::string &title);
@@ -57,4 +62,5 @@ class Task {
 
 	template <typename T>
 	friend void touch(T &, int32_t);
+	friend class DBManager;
 };

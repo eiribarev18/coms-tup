@@ -34,6 +34,7 @@ class DBManager {
 	bool deleteByID(const WorkLog &workLog);
 
 	Project getByID(Project &project, int32_t id);
+	Task getByID(Task &task, int32_t id);
 
 	nanodbc::timestamp getDate(bool includeTime = false);
 

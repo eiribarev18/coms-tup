@@ -22,6 +22,23 @@ Task::Task(int32_t projectID, int32_t assigneeID, const std::string &title, cons
 	setStatus(status);
 }
 
+Task::Task(DBManager &db, int32_t id, int32_t projectID, int32_t assigneeID, const string &title,
+	 const string &description, STATUS status, nanodbc::timestamp createdOn, int32_t createdBy,
+	 nanodbc::timestamp lastChangedOn, int32_t lastChangedBy):
+	db(db),
+	id(id),
+	projectID(projectID),
+	assigneeID(assigneeID),
+	title(title),
+	description(description),
+	status(status),
+	createdOn(createdOn),
+	createdBy(createdBy),
+	lastChangedOn(lastChangedOn),
+	lastChangedBy(lastChangedBy)
+{
+}
+
 void Task::setProjectID(int32_t projectID, int32_t changedBy)
 {
 	touch(*this, changedBy);

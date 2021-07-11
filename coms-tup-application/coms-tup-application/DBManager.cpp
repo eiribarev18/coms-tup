@@ -586,6 +586,63 @@ Project DBManager::getByID(Project &project, int32_t id)
 	}
 }
 
+Task DBManager::getByID(Task &task, int32_t id)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			SELECT
+				Id,
+				ProjectId,
+				AssigneeId,
+				Title,
+				[Status],
+				CreatedOn,
+				CreatedBy,
+				LastChangedOn,
+				LastChangedBy,
+				[Description]
+			FROM Tasks
+			WHERE Id = ?;
+		)"));
+
+		statement.bind(0, &id);
+
+		auto resSet = statement.execute();
+		if (!resSet.next()) return task;
+
+		auto id = resSet.get<int32_t>(0);
+		auto projectID = resSet.get<int32_t>(1);
+		auto assigneeID = resSet.get<int32_t>(2);
+		const auto &title = resSet.get<string>(3);
+		Task::STATUS status = (Task::STATUS)resSet.get<int>(4);
+		auto createdOn = resSet.get<nanodbc::timestamp>(5);
+		auto createdBy = resSet.get<int32_t>(6);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(7);
+		auto lastChangedBy = resSet.get<int32_t>(8);
+		const auto &description = resSet.get<string>(9, "");
+
+		Task out(*this,
+				 id,
+				 projectID,
+				 assigneeID,
+				 title,
+				 description,
+				 status,
+				 createdOn,
+				 createdBy,
+				 lastChangedOn,
+				 lastChangedBy);
+
+		return out;
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return task;
+	}
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);
