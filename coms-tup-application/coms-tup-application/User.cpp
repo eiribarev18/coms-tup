@@ -4,14 +4,14 @@
 
 using namespace std;
 
-User::User(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate(false)), db(db)
+User::User(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db)
 {
 	touch(*this, createdBy);
 }
 
 User::User(const string &username, const string &firstName, const string &lastName, int32_t createdBy,
 		   ACCESS_LEVEL accessLevel, DBManager &db) :
-	createdBy(createdBy), createdOn(db.getDate(false)), db(db)
+	createdBy(createdBy), createdOn(db.getDate()), db(db)
 {
 	touch(*this, createdBy);
 
@@ -63,6 +63,26 @@ string User::getLastName() const
 User::ACCESS_LEVEL User::getAccessLevel() const
 {
 	return accessLevel;
+}
+
+nanodbc::timestamp User::getCreatedOn() const
+{
+	return createdOn;
+}
+
+int32_t User::getCreatedBy() const
+{
+	return createdBy;
+}
+
+nanodbc::timestamp User::getLastChangedOn() const
+{
+	return lastChangedOn;
+}
+
+int32_t User::getLastChangedBy() const
+{
+	return lastChangedBy;
 }
 
 void User::setUsername(const string &username)

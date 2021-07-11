@@ -1,5 +1,7 @@
 #pragma once
 
+class User;
+
 #include "DBManager.h"
 
 #include <string>
@@ -26,15 +28,19 @@ class User {
 	std::string getFirstName() const;
 	std::string getLastName() const;
 	ACCESS_LEVEL getAccessLevel() const;
+	nanodbc::timestamp getCreatedOn() const;
+	int32_t getCreatedBy() const;
+	nanodbc::timestamp getLastChangedOn() const;
+	int32_t getLastChangedBy() const;
 
   private:
 	DBManager &db;
 	std::string username;
 	std::string firstName;
 	std::string lastName;
-	const std::string createdOn;
+	const nanodbc::timestamp createdOn;
 	const int32_t createdBy;
-	std::string lastChangedOn;
+	nanodbc::timestamp lastChangedOn;
 	int32_t lastChangedBy;
 	ACCESS_LEVEL accessLevel = ACCESS_LEVEL::USER;
 

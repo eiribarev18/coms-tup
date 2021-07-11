@@ -2,14 +2,16 @@
 
 #include "utils.h"
 
-Task::Task(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate(false)), db(db)
+using namespace std;
+
+Task::Task(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db)
 {
 	touch(*this, createdBy);
 }
 
 Task::Task(int32_t projectID, int32_t assigneeID, const std::string &title, const std::string &description,
 		   STATUS status, int32_t createdBy, DBManager &db) :
-	createdBy(createdBy), createdOn(db.getDate(false)), db(db)
+	createdBy(createdBy), createdOn(db.getDate()), db(db)
 {
 	touch(*this, createdBy);
 
@@ -65,12 +67,12 @@ int32_t Task::getAssigneeID() const
 	return assigneeID;
 }
 
-std::string Task::getTitle() const
+string Task::getTitle() const
 {
 	return title;
 }
 
-std::string Task::getDescription() const
+string Task::getDescription() const
 {
 	return description;
 }
@@ -78,6 +80,26 @@ std::string Task::getDescription() const
 Task::STATUS Task::getStatus() const
 {
 	return status;
+}
+
+nanodbc::timestamp Task::getCreatedOn() const
+{
+	return createdOn;
+}
+
+int32_t Task::getCreatedBy() const
+{
+	return createdBy;
+}
+
+nanodbc::timestamp Task::getLastChangedOn() const
+{
+	return lastChangedOn;
+}
+
+int32_t Task::getLastChangedBy() const
+{
+	return lastChangedBy;
 }
 
 void Task::setProjectID(int32_t projectID)

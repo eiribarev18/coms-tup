@@ -1,8 +1,10 @@
 #pragma once
 
-#include <string>
+class Project;
 
 #include "DBManager.h"
+
+#include <string>
 
 class Project {
   public:
@@ -14,15 +16,19 @@ class Project {
 
 	std::string getName() const;
 	std::string getDescription() const;
+	nanodbc::timestamp getCreatedOn() const;
+	int32_t getCreatedBy() const;
+	nanodbc::timestamp getLastChangedOn() const;
+	int32_t getLastChangedBy() const;
 
   private:
 	DBManager &db;
 	std::string name;
 	std::string description;
-	const std::string createdOn;
+	const nanodbc::timestamp createdOn;
 	const int32_t createdBy;
-	std::string lastChangedOn;
-	std::string lastChangedBy;
+	nanodbc::timestamp lastChangedOn;
+	int32_t lastChangedBy;
 
 	void setName(const std::string &name);
 	void setDescription(const std::string &description);

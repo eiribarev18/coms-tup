@@ -1,5 +1,7 @@
 #pragma once
 
+class WorkLog;
+
 #include "DBManager.h"
 
 #include <string>
@@ -10,13 +12,13 @@ class WorkLog {
 
 	int32_t getTaskID() const;
 	int32_t getUserID() const;
-	std::string getDate() const;
+	nanodbc::timestamp getDate() const;
 	int8_t getHoursSpent() const;
 
   private:
 	DBManager &db;
 	const int32_t taskID;
 	const int32_t userID;
-	const std::string date;
+	const nanodbc::timestamp date;
 	const int8_t hoursSpent;
 };

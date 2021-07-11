@@ -1,5 +1,7 @@
 #pragma once
 
+class Task;
+
 #include "DBManager.h"
 
 #include <string>
@@ -28,6 +30,10 @@ class Task {
 	std::string getTitle() const;
 	std::string getDescription() const;
 	STATUS getStatus() const;
+	nanodbc::timestamp getCreatedOn() const;
+	int32_t getCreatedBy() const;
+	nanodbc::timestamp getLastChangedOn() const;
+	int32_t getLastChangedBy() const;
 
   private:
 	DBManager &db;
@@ -36,9 +42,9 @@ class Task {
 	std::string title;
 	std::string description;
 	STATUS status;
-	const std::string &createdOn;
+	const nanodbc::timestamp createdOn;
 	const int32_t createdBy;
-	std::string lastChangedOn;
+	nanodbc::timestamp lastChangedOn;
 	int32_t lastChangedBy;
 
 	void setProjectID(int32_t projectID);

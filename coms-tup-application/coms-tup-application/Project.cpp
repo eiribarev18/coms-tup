@@ -4,13 +4,13 @@
 
 using namespace std;
 
-Project::Project(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate(false)), db(db)
+Project::Project(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db)
 {
 	touch(*this, createdBy);
 }
 
 Project::Project(const string &name, const string &description, int32_t createdBy, DBManager &db) :
-	createdBy(createdBy), createdOn(db.getDate(false)), db(db)
+	createdBy(createdBy), createdOn(db.getDate()), db(db)
 {
 	touch(*this, createdBy);
 
@@ -40,6 +40,26 @@ string Project::getName() const
 string Project::getDescription() const
 {
 	return description;
+}
+
+nanodbc::timestamp Project::getCreatedOn() const
+{
+	return createdOn;
+}
+
+int32_t Project::getCreatedBy() const
+{
+	return createdBy;
+}
+
+nanodbc::timestamp Project::getLastChangedOn() const
+{
+	return lastChangedOn;
+}
+
+int32_t Project::getLastChangedBy() const
+{
+	return lastChangedBy;
 }
 
 void Project::setName(const string &name)
