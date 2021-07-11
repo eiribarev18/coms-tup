@@ -21,6 +21,8 @@ class DBManager {
 	bool insert(const User &user, const std::string &password);
 	bool insert(const WorkLog &workLog);
 
+	bool update(const Project &project);
+
 	nanodbc::timestamp getDate(bool includeTime = false);
 
   private:

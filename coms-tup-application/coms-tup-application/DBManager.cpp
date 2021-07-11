@@ -202,6 +202,46 @@ bool DBManager::insert(const WorkLog &workLog)
 	return true;
 }
 
+bool DBManager::update(const Project &project)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			UPDATE Projects
+			SET
+				[Name] = ?,
+				[Description] = ?,
+				LastChangedOn = ?,
+				LastChangedBy = ?
+			WHERE Id = ?;
+		)"));
+
+		const auto &bindTemp0 = project.getName();
+		const auto &bindTemp1 = project.getDescription();
+		auto bindTemp2 = project.getLastChangedOn();
+		auto bindTemp3 = project.getLastChangedBy();
+		auto bindTemp4 = project.getID();
+
+		statement.bind(0, bindTemp0.c_str());
+		if (bindTemp1.size())
+			statement.bind(1, bindTemp1.c_str());
+		else
+			statement.bind_null(1);
+		statement.bind(2, &bindTemp2);
+		statement.bind(3, &bindTemp3);
+		statement.bind(4, &bindTemp4);
+
+		statement.execute();
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return false;
+	}
+
+	return true;
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);
