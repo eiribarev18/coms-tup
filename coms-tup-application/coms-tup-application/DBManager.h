@@ -33,6 +33,8 @@ class DBManager {
 	bool deleteByID(const User &user);
 	bool deleteByID(const WorkLog &workLog);
 
+	Project getByID(Project &project, int32_t id);
+
 	nanodbc::timestamp getDate(bool includeTime = false);
 
   private:

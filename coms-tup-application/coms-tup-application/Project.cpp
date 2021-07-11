@@ -18,6 +18,19 @@ Project::Project(const string &name, const string &description, int32_t createdB
 	setDescription(description);
 }
 
+Project::Project(DBManager &db, int32_t id, const string &name, const string &description, nanodbc::timestamp createdOn,
+				 int32_t createdBy, nanodbc::timestamp lastChangedOn, int32_t lastChangedBy) :
+	db(db),
+	id(id),
+	name(name),
+	description(description),
+	createdOn(createdOn),
+	createdBy(createdBy),
+	lastChangedOn(lastChangedOn),
+	lastChangedBy(lastChangedBy)
+{
+}
+
 void Project::setName(const string &name, int32_t changedBy)
 {
 	touch(*this, changedBy);

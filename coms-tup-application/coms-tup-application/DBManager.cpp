@@ -545,6 +545,47 @@ bool DBManager::deleteByID(const WorkLog &workLog)
 	return true;
 }
 
+Project DBManager::getByID(Project &project, int32_t id)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			SELECT
+				Id,
+				[Name],
+				CreatedOn,
+				CreatedBy,
+				LastChangedOn,
+				LastChangedBy,
+				[Description]
+			FROM Projects
+			WHERE Id = ?;
+		)"));
+
+		statement.bind(0, &id);
+
+		auto resSet = statement.execute();
+		if (!resSet.next()) return project;
+
+		auto id = resSet.get<int32_t>(0);
+		const auto &name = resSet.get<string>(1);
+		auto createdOn = resSet.get<nanodbc::timestamp>(2);
+		auto createdBy = resSet.get<int32_t>(3);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(4);
+		auto lastChangedBy = resSet.get<int32_t>(5);
+		const auto &description = resSet.get<string>(6, "");
+
+		Project out(*this, id, name, description, createdOn, createdBy, lastChangedOn, lastChangedBy);
+
+		return out;
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return project;
+	}
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);

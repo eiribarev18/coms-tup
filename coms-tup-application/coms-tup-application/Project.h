@@ -32,9 +32,14 @@ class Project {
 	nanodbc::timestamp lastChangedOn;
 	int32_t lastChangedBy;
 
+	// DB Constructor
+	Project(DBManager &db, int32_t id, const std::string &name, const std::string &description,
+			nanodbc::timestamp createdOn, int32_t createdBy, nanodbc::timestamp lastChangedOn, int32_t lastChangedBy);
+
 	void setName(const std::string &name);
 	void setDescription(const std::string &description);
 
 	template <typename T>
 	friend void touch(T &, int32_t);
+	friend class DBManager;
 };
