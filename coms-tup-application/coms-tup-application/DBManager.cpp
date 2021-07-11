@@ -680,6 +680,48 @@ Team DBManager::getByID(Team &team, int32_t id)
 	}
 }
 
+User DBManager::getByID(User &user, int32_t id)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			SELECT
+				Username,
+				FirstName,
+				LastName,
+				CreatedOn,
+				CreatedBy,
+				LastChangedOn,
+				LastChangedBy,
+				AccessLevel
+			FROM Users
+			WHERE Id = ?;
+		)"));
+
+		statement.bind(0, &id);
+
+		auto resSet = statement.execute();
+		if (!resSet.next()) return user;
+
+		const auto &username = resSet.get<string>(0);
+		const auto &firstName = resSet.get<string>(1);
+		const auto &lastName = resSet.get<string>(2);
+		auto createdOn = resSet.get<nanodbc::timestamp>(3);
+		auto createdBy = resSet.get<int32_t>(4);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(5);
+		auto lastChangedBy = resSet.get<int32_t>(6);
+		auto accessLevel = (User::ACCESS_LEVEL)resSet.get<int>(7);
+
+		return {
+			*this, id, username, firstName, lastName, createdOn, createdBy, lastChangedOn, lastChangedBy, accessLevel};
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return user;
+	}
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);

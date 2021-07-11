@@ -46,6 +46,11 @@ class User {
 	int32_t lastChangedBy;
 	ACCESS_LEVEL accessLevel = ACCESS_LEVEL::USER;
 
+	// DB Constructor
+	User(DBManager &db, int32_t id, const std::string &username, const std::string &firstName,
+		 const std::string &lastName, nanodbc::timestamp createdOn, int32_t createdBy, nanodbc::timestamp lastChangedOn,
+		 int32_t lastChangedBy, ACCESS_LEVEL accessLevel);
+
 	void setUsername(const std::string &username);
 	void setFirstName(const std::string &firstName);
 	void setLastName(const std::string &lastName);
@@ -53,4 +58,5 @@ class User {
 
 	template <typename T>
 	friend void touch(T &, int32_t);
+	friend class DBManager;
 };

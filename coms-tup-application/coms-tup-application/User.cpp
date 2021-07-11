@@ -21,6 +21,22 @@ User::User(const string &username, const string &firstName, const string &lastNa
 	setAccessLevel(accessLevel);
 }
 
+User::User(DBManager &db, int32_t id, const string &username, const string &firstName, const string &lastName,
+	 nanodbc::timestamp createdOn, int32_t createdBy, nanodbc::timestamp lastChangedOn, int32_t lastChangedBy,
+	 ACCESS_LEVEL accessLevel):
+	db(db),
+	id(id),
+	username(username),
+	firstName(firstName),
+	lastName(lastName),
+	createdOn(createdOn),
+	createdBy(createdBy),
+	lastChangedOn(lastChangedOn),
+	lastChangedBy(lastChangedBy),
+	accessLevel(accessLevel)
+{
+}
+
 void User::setUsername(const string &username, int32_t changedBy)
 {
 	setUsername(username);
