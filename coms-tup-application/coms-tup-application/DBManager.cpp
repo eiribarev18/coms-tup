@@ -202,7 +202,7 @@ bool DBManager::insert(const WorkLog &workLog)
 	return true;
 }
 
-bool DBManager::update(const Project &project)
+bool DBManager::updateByID(const Project &project)
 {
 	try {
 		nanodbc::statement statement(connection);
@@ -242,7 +242,7 @@ bool DBManager::update(const Project &project)
 	return true;
 }
 
-bool DBManager::update(const Task &task)
+bool DBManager::updateByID(const Task &task)
 {
 	try {
 		nanodbc::statement statement(connection);
@@ -291,7 +291,7 @@ bool DBManager::update(const Task &task)
 	return true;
 }
 
-bool DBManager::update(const Team &team)
+bool DBManager::updateByID(const Team &team)
 {
 	try {
 		nanodbc::statement statement(connection);
@@ -325,7 +325,7 @@ bool DBManager::update(const Team &team)
 	return true;
 }
 
-bool DBManager::update(const User &user)
+bool DBManager::updateByID(const User &user)
 {
 	try {
 		nanodbc::statement statement(connection);
@@ -369,7 +369,7 @@ bool DBManager::update(const User &user)
 	return true;
 }
 
-bool DBManager::update(const User &user, const string &password)
+bool DBManager::updateByID(const User &user, const string &password)
 {
 	try {
 		nanodbc::statement statement(connection);

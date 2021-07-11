@@ -21,11 +21,11 @@ class DBManager {
 	bool insert(const User &user, const std::string &password);
 	bool insert(const WorkLog &workLog);
 
-	bool update(const Project &project);
-	bool update(const Task &task);
-	bool update(const Team &team);
-	bool update(const User &user);
-	bool update(const User &user, const std::string &password);
+	bool updateByID(const Project &project);
+	bool updateByID(const Task &task);
+	bool updateByID(const Team &team);
+	bool updateByID(const User &user);
+	bool updateByID(const User &user, const std::string &password);
 
 	nanodbc::timestamp getDate(bool includeTime = false);
 
