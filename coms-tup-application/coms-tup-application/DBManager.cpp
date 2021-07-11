@@ -493,6 +493,32 @@ bool DBManager::deleteByID(const Team &team)
 	return true;
 }
 
+bool DBManager::deleteByID(const User &user)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			UPDATE Users
+			SET
+				IsDeleted = 1
+			WHERE Id = ?
+		)"));
+
+		auto bindTemp0 = user.getID();
+
+		statement.bind(0, &bindTemp0);
+
+		statement.execute();
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return false;
+	}
+
+	return true;
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);
