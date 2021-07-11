@@ -173,8 +173,29 @@ bool DBManager::insert(const User &user, const string &password)
 bool DBManager::insert(const WorkLog &workLog)
 {
 	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			INSERT INTO WorkLogs
+				(TaskId, UserId, [Date], HoursSpent)
+			VALUES
+				(?, ?, ?, ?);
+		)"));
+
+		auto bindTemp0 = workLog.getTaskID();
+		auto bindTemp1 = workLog.getUserID();
+		auto bindTemp2 = workLog.getDate();
+		auto bindTemp3 = (int)workLog.getHoursSpent();
+
+		statement.bind(0, &bindTemp0);
+		statement.bind(1, &bindTemp1);
+		statement.bind(2, &bindTemp2);
+		statement.bind(3, &bindTemp3);
+
+		statement.execute();
 	}
 	catch (exception &e) {
+		cerr << e.what() << endl;
 		return false;
 	}
 
