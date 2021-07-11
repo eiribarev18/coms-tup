@@ -552,7 +552,6 @@ Project DBManager::getByID(Project &project, int32_t id)
 
 		nanodbc::prepare(statement, NANODBC_TEXT(R"(
 			SELECT
-				Id,
 				[Name],
 				CreatedOn,
 				CreatedBy,
@@ -568,17 +567,14 @@ Project DBManager::getByID(Project &project, int32_t id)
 		auto resSet = statement.execute();
 		if (!resSet.next()) return project;
 
-		auto id = resSet.get<int32_t>(0);
-		const auto &name = resSet.get<string>(1);
-		auto createdOn = resSet.get<nanodbc::timestamp>(2);
-		auto createdBy = resSet.get<int32_t>(3);
-		auto lastChangedOn = resSet.get<nanodbc::timestamp>(4);
-		auto lastChangedBy = resSet.get<int32_t>(5);
-		const auto &description = resSet.get<string>(6, "");
+		const auto &name = resSet.get<string>(0);
+		auto createdOn = resSet.get<nanodbc::timestamp>(1);
+		auto createdBy = resSet.get<int32_t>(2);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(3);
+		auto lastChangedBy = resSet.get<int32_t>(4);
+		const auto &description = resSet.get<string>(5, "");
 
-		Project out(*this, id, name, description, createdOn, createdBy, lastChangedOn, lastChangedBy);
-
-		return out;
+		return {*this, id, name, description, createdOn, createdBy, lastChangedOn, lastChangedBy};
 	}
 	catch (exception &e) {
 		cerr << e.what() << endl;
@@ -593,7 +589,6 @@ Task DBManager::getByID(Task &task, int32_t id)
 
 		nanodbc::prepare(statement, NANODBC_TEXT(R"(
 			SELECT
-				Id,
 				ProjectId,
 				AssigneeId,
 				Title,
@@ -612,30 +607,27 @@ Task DBManager::getByID(Task &task, int32_t id)
 		auto resSet = statement.execute();
 		if (!resSet.next()) return task;
 
-		auto id = resSet.get<int32_t>(0);
-		auto projectID = resSet.get<int32_t>(1);
-		auto assigneeID = resSet.get<int32_t>(2);
-		const auto &title = resSet.get<string>(3);
-		Task::STATUS status = (Task::STATUS)resSet.get<int>(4);
-		auto createdOn = resSet.get<nanodbc::timestamp>(5);
-		auto createdBy = resSet.get<int32_t>(6);
-		auto lastChangedOn = resSet.get<nanodbc::timestamp>(7);
-		auto lastChangedBy = resSet.get<int32_t>(8);
-		const auto &description = resSet.get<string>(9, "");
+		auto projectID = resSet.get<int32_t>(0);
+		auto assigneeID = resSet.get<int32_t>(1);
+		const auto &title = resSet.get<string>(2);
+		Task::STATUS status = (Task::STATUS)resSet.get<int>(3);
+		auto createdOn = resSet.get<nanodbc::timestamp>(4);
+		auto createdBy = resSet.get<int32_t>(5);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(6);
+		auto lastChangedBy = resSet.get<int32_t>(7);
+		const auto &description = resSet.get<string>(8, "");
 
-		Task out(*this,
-				 id,
-				 projectID,
-				 assigneeID,
-				 title,
-				 description,
-				 status,
-				 createdOn,
-				 createdBy,
-				 lastChangedOn,
-				 lastChangedBy);
-
-		return out;
+		return {*this,
+				id,
+				projectID,
+				assigneeID,
+				title,
+				description,
+				status,
+				createdOn,
+				createdBy,
+				lastChangedOn,
+				lastChangedBy};
 	}
 	catch (exception &e) {
 		cerr << e.what() << endl;
@@ -650,7 +642,6 @@ Team DBManager::getByID(Team &team, int32_t id)
 
 		nanodbc::prepare(statement, NANODBC_TEXT(R"(
 			SELECT
-				Id,
 				[Name],
 				CreatedOn,
 				CreatedBy,
@@ -665,12 +656,11 @@ Team DBManager::getByID(Team &team, int32_t id)
 		auto resSet = statement.execute();
 		if (!resSet.next()) return team;
 
-		auto id = resSet.get<int32_t>(0);
-		const auto &name = resSet.get<string>(1);
-		auto createdOn = resSet.get<nanodbc::timestamp>(2);
-		auto createdBy = resSet.get<int32_t>(3);
-		auto lastChangedOn = resSet.get<nanodbc::timestamp>(4);
-		auto lastChangedBy = resSet.get<int32_t>(5);
+		const auto &name = resSet.get<string>(0);
+		auto createdOn = resSet.get<nanodbc::timestamp>(1);
+		auto createdBy = resSet.get<int32_t>(2);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(3);
+		auto lastChangedBy = resSet.get<int32_t>(4);
 
 		return {*this, id, name, createdOn, createdBy, lastChangedOn, lastChangedBy};
 	}
