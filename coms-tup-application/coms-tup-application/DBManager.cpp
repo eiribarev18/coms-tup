@@ -53,8 +53,42 @@ bool DBManager::insert(const Project &project)
 bool DBManager::insert(const Task &task)
 {
 	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			INSERT INTO Tasks
+				(ProjectId, AssigneeId, Title, [Description], [Status], CreatedOn, CreatedBy, LastChangedOn, LastChangedBy)
+			VALUES
+				(?, ?, ?, ?, ?, ?, ?, ?, ?);
+		)"));
+
+		auto bindTemp0 = task.getProjectID();
+		auto bindTemp1 = task.getAssigneeID();
+		const auto &bindTemp2 = task.getTitle();
+		const auto &bindTemp3 = task.getDescription();
+		auto bindTemp4 = (int)task.getStatus();
+		auto bindTemp5 = task.getCreatedOn();
+		auto bindTemp6 = task.getCreatedBy();
+		auto bindTemp7 = task.getLastChangedOn();
+		auto bindTemp8 = task.getLastChangedBy();
+
+		statement.bind(0, &bindTemp0);
+		statement.bind(1, &bindTemp1);
+		statement.bind(2, bindTemp2.c_str());
+		if (bindTemp3.size())
+			statement.bind(3, bindTemp3.c_str());
+		else
+			statement.bind_null(3);
+		statement.bind(4, &bindTemp4);
+		statement.bind(5, &bindTemp5);
+		statement.bind(6, &bindTemp6);
+		statement.bind(7, &bindTemp7);
+		statement.bind(8, &bindTemp8);
+
+		statement.execute();
 	}
 	catch (exception &e) {
+		cerr << e.what() << endl;
 		return false;
 	}
 
