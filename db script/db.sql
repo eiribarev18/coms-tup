@@ -34,50 +34,51 @@ ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [FK_Projects-LastChangedBy_Users]
 GO
 ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [FK_Projects-CreatedBy_Users]
 GO
+ALTER TABLE [dbo].[WorkLogs] DROP CONSTRAINT [DF_WorkLogs_IsDeleted]
+GO
+ALTER TABLE [dbo].[Users] DROP CONSTRAINT [DF_Users_IsDeleted]
+GO
 ALTER TABLE [dbo].[Users] DROP CONSTRAINT [DF_Users_IsAdmin]
 GO
 ALTER TABLE [dbo].[Users] DROP CONSTRAINT [DF_Users_CreatedOn]
 GO
+ALTER TABLE [dbo].[Teams] DROP CONSTRAINT [DF_Teams_IsDeleted]
+GO
 ALTER TABLE [dbo].[Teams] DROP CONSTRAINT [DF_Teams_CreatedOn]
+GO
+ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [DF_Tasks_IsDeleted]
 GO
 ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [DF_Tasks_CreatedOn]
 GO
+ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [DF_Projects_IsDeleted]
+GO
 ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [DF_Projects_CreatedOn]
 GO
-/****** Object:  Table [dbo].[WorkLogs]    Script Date: 7/6/2021 9:29:41 AM ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WorkLogs]') AND type in (N'U'))
 DROP TABLE [dbo].[WorkLogs]
 GO
-/****** Object:  Table [dbo].[UsersTeams]    Script Date: 7/6/2021 9:29:41 AM ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UsersTeams]') AND type in (N'U'))
 DROP TABLE [dbo].[UsersTeams]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 7/6/2021 9:29:41 AM ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND type in (N'U'))
 DROP TABLE [dbo].[Users]
 GO
-/****** Object:  Table [dbo].[TeamsProjects]    Script Date: 7/6/2021 9:29:41 AM ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TeamsProjects]') AND type in (N'U'))
 DROP TABLE [dbo].[TeamsProjects]
 GO
-/****** Object:  Table [dbo].[Teams]    Script Date: 7/6/2021 9:29:41 AM ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Teams]') AND type in (N'U'))
 DROP TABLE [dbo].[Teams]
 GO
-/****** Object:  Table [dbo].[Tasks]    Script Date: 7/6/2021 9:29:41 AM ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Tasks]') AND type in (N'U'))
 DROP TABLE [dbo].[Tasks]
 GO
-/****** Object:  Table [dbo].[Projects]    Script Date: 7/6/2021 9:29:41 AM ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Projects]') AND type in (N'U'))
 DROP TABLE [dbo].[Projects]
 GO
 USE [master]
 GO
-/****** Object:  Database [coms-tup-db]    Script Date: 7/6/2021 9:29:41 AM ******/
 DROP DATABASE [coms-tup-db]
 GO
-/****** Object:  Database [coms-tup-db]    Script Date: 7/6/2021 9:29:41 AM ******/
 CREATE DATABASE [coms-tup-db]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -150,7 +151,6 @@ ALTER DATABASE [coms-tup-db] SET DELAYED_DURABILITY = DISABLED
 GO
 USE [coms-tup-db]
 GO
-/****** Object:  Table [dbo].[Projects]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -163,13 +163,13 @@ CREATE TABLE [dbo].[Projects](
 	[CreatedBy] [int] NOT NULL,
 	[LastChangedOn] [datetime2](0) NOT NULL,
 	[LastChangedBy] [int] NOT NULL,
+	[IsDeleted] [bit] NOT NULL,
  CONSTRAINT [PK_Projects] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tasks]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -185,13 +185,13 @@ CREATE TABLE [dbo].[Tasks](
 	[CreatedBy] [int] NOT NULL,
 	[LastChangedOn] [datetime2](0) NOT NULL,
 	[LastChangedBy] [int] NOT NULL,
+	[IsDeleted] [bit] NOT NULL,
  CONSTRAINT [PK_Tasks] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Teams]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -203,13 +203,13 @@ CREATE TABLE [dbo].[Teams](
 	[CreatedBy] [int] NOT NULL,
 	[LastChangedOn] [datetime2](0) NOT NULL,
 	[LastChangedBy] [int] NOT NULL,
+	[IsDeleted] [bit] NOT NULL,
  CONSTRAINT [PK_Teams] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TeamsProjects]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -224,7 +224,6 @@ CREATE TABLE [dbo].[TeamsProjects](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -238,15 +237,15 @@ CREATE TABLE [dbo].[Users](
 	[CreatedOn] [date] NOT NULL,
 	[CreatedBy] [int] NULL,
 	[LastChangedOn] [datetime2](0) NOT NULL,
-	[LastChangedBy] [int] NOT NULL,
-	[IsAdmin] [bit] NOT NULL,
+	[LastChangedBy] [int] NULL,
+	[AccessLevel] [tinyint] NOT NULL,
+	[IsDeleted] [bit] NOT NULL,
  CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[UsersTeams]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -261,7 +260,6 @@ CREATE TABLE [dbo].[UsersTeams](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[WorkLogs]    Script Date: 7/6/2021 9:29:41 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -272,21 +270,64 @@ CREATE TABLE [dbo].[WorkLogs](
 	[UserId] [int] NOT NULL,
 	[Date] [date] NOT NULL,
 	[HoursSpent] [tinyint] NOT NULL,
+	[IsDeleted] [bit] NOT NULL,
  CONSTRAINT [PK_WorkLogs] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+SET IDENTITY_INSERT [dbo].[Projects] ON 
+GO
+INSERT [dbo].[Projects] ([Id], [Name], [Description], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [IsDeleted]) VALUES (1, N'CoMS TUP', NULL, CAST(N'2021-07-11' AS Date), 1, CAST(N'2021-07-11T07:50:00.0000000' AS DateTime2), 1, 0)
+GO
+INSERT [dbo].[Projects] ([Id], [Name], [Description], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [IsDeleted]) VALUES (2, N'Intsitrus', N'Portokal', CAST(N'2021-07-11' AS Date), 1, CAST(N'2021-07-11T09:34:02.0000000' AS DateTime2), 1, 0)
+GO
+SET IDENTITY_INSERT [dbo].[Projects] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Tasks] ON 
+GO
+INSERT [dbo].[Tasks] ([Id], [ProjectId], [AssigneeId], [Title], [Description], [Status], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [IsDeleted]) VALUES (1, 1, 1, N'Find Meaning', NULL, 1, CAST(N'2021-07-11' AS Date), 1, CAST(N'2021-07-11T08:19:33.0000000' AS DateTime2), 1, 0)
+GO
+SET IDENTITY_INSERT [dbo].[Tasks] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Teams] ON 
+GO
+INSERT [dbo].[Teams] ([Id], [Name], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [IsDeleted]) VALUES (1, N'CryptoTigan', CAST(N'2021-07-11' AS Date), 1, CAST(N'2021-07-11T08:34:57.0000000' AS DateTime2), 1, 0)
+GO
+SET IDENTITY_INSERT [dbo].[Teams] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Users] ON 
+GO
+INSERT [dbo].[Users] ([Id], [Username], [Password], [FirstName], [LastName], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [AccessLevel], [IsDeleted]) VALUES (1, N'admin', N'adminpass', N'Panelcho', N'Adminov', CAST(N'2021-07-11' AS Date), 1, CAST(N'2021-07-11T07:48:22.0000000' AS DateTime2), 1, 2, 0)
+GO
+SET IDENTITY_INSERT [dbo].[Users] OFF
+GO
+SET IDENTITY_INSERT [dbo].[WorkLogs] ON 
+GO
+INSERT [dbo].[WorkLogs] ([Id], [TaskId], [UserId], [Date], [HoursSpent], [IsDeleted]) VALUES (1, 1, 1, CAST(N'2021-07-11' AS Date), 22, 0)
+GO
+SET IDENTITY_INSERT [dbo].[WorkLogs] OFF
+GO
 ALTER TABLE [dbo].[Projects] ADD  CONSTRAINT [DF_Projects_CreatedOn]  DEFAULT (getutcdate()) FOR [CreatedOn]
+GO
+ALTER TABLE [dbo].[Projects] ADD  CONSTRAINT [DF_Projects_IsDeleted]  DEFAULT ((0)) FOR [IsDeleted]
 GO
 ALTER TABLE [dbo].[Tasks] ADD  CONSTRAINT [DF_Tasks_CreatedOn]  DEFAULT (getutcdate()) FOR [CreatedOn]
 GO
+ALTER TABLE [dbo].[Tasks] ADD  CONSTRAINT [DF_Tasks_IsDeleted]  DEFAULT ((0)) FOR [IsDeleted]
+GO
 ALTER TABLE [dbo].[Teams] ADD  CONSTRAINT [DF_Teams_CreatedOn]  DEFAULT (getutcdate()) FOR [CreatedOn]
+GO
+ALTER TABLE [dbo].[Teams] ADD  CONSTRAINT [DF_Teams_IsDeleted]  DEFAULT ((0)) FOR [IsDeleted]
 GO
 ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_CreatedOn]  DEFAULT (getutcdate()) FOR [CreatedOn]
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_IsAdmin]  DEFAULT ((0)) FOR [IsAdmin]
+ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_IsAdmin]  DEFAULT ((0)) FOR [AccessLevel]
+GO
+ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_IsDeleted]  DEFAULT ((0)) FOR [IsDeleted]
+GO
+ALTER TABLE [dbo].[WorkLogs] ADD  CONSTRAINT [DF_WorkLogs_IsDeleted]  DEFAULT ((0)) FOR [IsDeleted]
 GO
 ALTER TABLE [dbo].[Projects]  WITH CHECK ADD  CONSTRAINT [FK_Projects-CreatedBy_Users] FOREIGN KEY([CreatedBy])
 REFERENCES [dbo].[Users] ([Id])
