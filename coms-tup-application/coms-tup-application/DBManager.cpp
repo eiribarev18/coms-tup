@@ -98,8 +98,31 @@ bool DBManager::insert(const Task &task)
 bool DBManager::insert(const Team &team)
 {
 	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			INSERT INTO Teams
+				([Name], CreatedOn, CreatedBy, LastChangedOn, LastChangedBy)
+			VALUES
+				(?, ?, ?, ?, ?);
+		)"));
+
+		const auto &bindTemp0 = team.getName();
+		auto bindTemp1 = team.getCreatedOn();
+		auto bindTemp2 = team.getCreatedBy();
+		auto bindTemp3 = team.getLastChangedOn();
+		auto bindTemp4 = team.getLastChangedBy();
+
+		statement.bind(0, bindTemp0.c_str());
+		statement.bind(1, &bindTemp1);
+		statement.bind(2, &bindTemp2);
+		statement.bind(3, &bindTemp3);
+		statement.bind(4, &bindTemp4);
+
+		statement.execute();
 	}
 	catch (exception &e) {
+		cerr << e.what() << endl;
 		return false;
 	}
 
