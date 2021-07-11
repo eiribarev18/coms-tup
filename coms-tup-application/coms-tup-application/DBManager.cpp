@@ -415,6 +415,32 @@ bool DBManager::updateByID(const User &user, const string &password)
 	return true;
 }
 
+bool DBManager::deleteByID(const Project &project)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			UPDATE Projects
+			SET
+				IsDeleted = 1
+			WHERE Id = ?
+		)"));
+
+		auto bindTemp0 = project.getID();
+
+		statement.bind(0, &bindTemp0);
+
+		statement.execute();
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return false;
+	}
+
+	return true;
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);

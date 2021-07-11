@@ -27,6 +27,8 @@ class DBManager {
 	bool updateByID(const User &user);
 	bool updateByID(const User &user, const std::string &password);
 
+	bool deleteByID(const Project &project);
+
 	nanodbc::timestamp getDate(bool includeTime = false);
 
   private:
