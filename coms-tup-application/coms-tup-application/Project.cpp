@@ -4,13 +4,13 @@
 
 using namespace std;
 
-Project::Project(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db)
+Project::Project(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 }
 
 Project::Project(const string &name, const string &description, int32_t createdBy, DBManager &db) :
-	createdBy(createdBy), createdOn(db.getDate()), db(db)
+	createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 
@@ -30,6 +30,11 @@ void Project::setDescription(const string &description, int32_t changedBy)
 	touch(*this, changedBy);
 
 	setDescription(description);
+}
+
+int32_t Project::getID() const
+{
+	return id;
 }
 
 string Project::getName() const

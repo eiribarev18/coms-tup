@@ -13,6 +13,7 @@ class Team {
 
 	void setName(const std::string &name, int32_t changedBy);
 
+	int32_t getID() const;
 	std::string getName() const;
 	nanodbc::timestamp getCreatedOn() const;
 	int32_t getCreatedBy() const;
@@ -21,6 +22,7 @@ class Team {
 
   private:
 	DBManager &db;
+	const int32_t id;
 	std::string name;
 	const nanodbc::timestamp createdOn;
 	const int32_t createdBy;

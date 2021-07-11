@@ -14,6 +14,7 @@ class Project {
 	void setName(const std::string &name, int32_t changedBy);
 	void setDescription(const std::string &description, int32_t changedBy);
 
+	int32_t getID() const;
 	std::string getName() const;
 	std::string getDescription() const;
 	nanodbc::timestamp getCreatedOn() const;
@@ -23,6 +24,7 @@ class Project {
 
   private:
 	DBManager &db;
+	const int32_t id;
 	std::string name;
 	std::string description;
 	const nanodbc::timestamp createdOn;

@@ -4,13 +4,13 @@
 
 using namespace std;
 
-Team::Team(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db)
+Team::Team(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 }
 
 Team::Team(const string &name, int32_t createdBy, DBManager &db) :
-	createdBy(createdBy), createdOn(db.getDate()), db(db)
+	createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 
@@ -22,6 +22,11 @@ void Team::setName(const string &name, int32_t changedBy)
 	touch(*this, changedBy);
 
 	setName(name);
+}
+
+int32_t Team::getID() const
+{
+	return id;
 }
 
 string Team::getName() const

@@ -4,14 +4,14 @@
 
 using namespace std;
 
-Task::Task(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db)
+Task::Task(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 }
 
 Task::Task(int32_t projectID, int32_t assigneeID, const std::string &title, const std::string &description,
 		   STATUS status, int32_t createdBy, DBManager &db) :
-	createdBy(createdBy), createdOn(db.getDate()), db(db)
+	createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 
@@ -55,6 +55,11 @@ void Task::setStatus(STATUS status, int32_t changedBy)
 	touch(*this, changedBy);
 
 	setStatus(status);
+}
+
+int32_t Task::getID() const
+{
+	return id;
 }
 
 int32_t Task::getProjectID() const

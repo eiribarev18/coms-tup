@@ -25,6 +25,7 @@ class Task {
 	void setDescription(const std::string &description, int32_t changedBy);
 	void setStatus(STATUS status, int32_t changedBy);
 
+	int32_t getID() const;
 	int32_t getProjectID() const;
 	int32_t getAssigneeID() const;
 	std::string getTitle() const;
@@ -37,6 +38,7 @@ class Task {
 
   private:
 	DBManager &db;
+	const int32_t id;
 	int32_t projectID;
 	int32_t assigneeID;
 	std::string title;

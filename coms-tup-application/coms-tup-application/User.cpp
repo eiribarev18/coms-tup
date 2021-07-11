@@ -4,14 +4,14 @@
 
 using namespace std;
 
-User::User(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db)
+User::User(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 }
 
 User::User(const string &username, const string &firstName, const string &lastName, int32_t createdBy,
 		   ACCESS_LEVEL accessLevel, DBManager &db) :
-	createdBy(createdBy), createdOn(db.getDate()), db(db)
+	createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 
@@ -43,6 +43,11 @@ void User::setAccessLevel(ACCESS_LEVEL accessLevel, int32_t changedBy)
 {
 	setAccessLevel(accessLevel);
 	touch(*this, changedBy);
+}
+
+int32_t User::getID() const
+{
+	return id;
 }
 
 string User::getUsername() const

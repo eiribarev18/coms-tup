@@ -24,6 +24,7 @@ class User {
 	void setLastName(const std::string &lastName, int32_t changedBy);
 	void setAccessLevel(ACCESS_LEVEL accessLevel, int32_t changedBy);
 
+	int32_t getID() const;
 	std::string getUsername() const;
 	std::string getFirstName() const;
 	std::string getLastName() const;
@@ -35,6 +36,7 @@ class User {
 
   private:
 	DBManager &db;
+	const int32_t id;
 	std::string username;
 	std::string firstName;
 	std::string lastName;
