@@ -325,6 +325,96 @@ bool DBManager::update(const Team &team)
 	return true;
 }
 
+bool DBManager::update(const User &user)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			UPDATE Users
+			SET
+				Username = ?,
+				FirstName = ?,
+				LastName = ?,
+				LastChangedOn = ?,
+				LastChangedBy = ?,
+				AccessLevel = ?
+			WHERE
+				Id = ?;
+		)"));
+
+		const auto &bindTemp0 = user.getUsername();
+		const auto &bindTemp1 = user.getFirstName();
+		const auto &bindTemp2 = user.getLastName();
+		auto bindTemp3 = user.getLastChangedOn();
+		auto bindTemp4 = user.getLastChangedBy();
+		auto bindTemp5 = (int)user.getAccessLevel();
+		auto bindTemp6 = user.getID();
+
+		statement.bind(0, bindTemp0.c_str());
+		statement.bind(1, bindTemp1.c_str());
+		statement.bind(2, bindTemp2.c_str());
+		statement.bind(3, &bindTemp3);
+		statement.bind(4, &bindTemp4);
+		statement.bind(5, &bindTemp5);
+		statement.bind(6, &bindTemp6);
+
+		statement.execute();
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool DBManager::update(const User &user, const string &password)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			UPDATE Users
+			SET
+				Username = ?,
+				[Password] = ?,
+				FirstName = ?,
+				LastName = ?,
+				LastChangedOn = ?,
+				LastChangedBy = ?,
+				AccessLevel = ?
+			WHERE
+				Id = ?;
+		)"));
+
+		const auto &bindTemp0 = user.getUsername();
+		const auto &bindTemp2 = user.getFirstName();
+		const auto &bindTemp3 = user.getLastName();
+		auto bindTemp4 = user.getLastChangedOn();
+		auto bindTemp5 = user.getLastChangedBy();
+		auto bindTemp6 = (int)user.getAccessLevel();
+		auto bindTemp7 = user.getID();
+
+		statement.bind(0, bindTemp0.c_str());
+		statement.bind(1, password.c_str());
+		statement.bind(2, bindTemp2.c_str());
+		statement.bind(3, bindTemp3.c_str());
+		statement.bind(4, &bindTemp4);
+		statement.bind(5, &bindTemp5);
+		statement.bind(6, &bindTemp6);
+		statement.bind(7, &bindTemp7);
+
+		statement.execute();
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return false;
+	}
+
+	return true;
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);
