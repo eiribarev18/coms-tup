@@ -22,6 +22,7 @@ class DBManager {
 	bool insert(const WorkLog &workLog);
 
 	bool update(const Project &project);
+	bool update(const Task &task);
 
 	nanodbc::timestamp getDate(bool includeTime = false);
 
