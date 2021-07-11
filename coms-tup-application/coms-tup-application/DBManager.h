@@ -31,6 +31,7 @@ class DBManager {
 	bool deleteByID(const Task &task);
 	bool deleteByID(const Team &team);
 	bool deleteByID(const User &user);
+	bool deleteByID(const WorkLog &workLog);
 
 	nanodbc::timestamp getDate(bool includeTime = false);
 
