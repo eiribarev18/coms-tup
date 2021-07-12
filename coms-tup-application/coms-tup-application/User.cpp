@@ -22,8 +22,8 @@ User::User(const string &username, const string &firstName, const string &lastNa
 }
 
 User::User(DBManager &db, int32_t id, const string &username, const string &firstName, const string &lastName,
-	 nanodbc::timestamp createdOn, int32_t createdBy, nanodbc::timestamp lastChangedOn, int32_t lastChangedBy,
-	 ACCESS_LEVEL accessLevel):
+		   nanodbc::timestamp createdOn, int32_t createdBy, nanodbc::timestamp lastChangedOn, int32_t lastChangedBy,
+		   ACCESS_LEVEL accessLevel) :
 	db(db),
 	id(id),
 	username(username),
