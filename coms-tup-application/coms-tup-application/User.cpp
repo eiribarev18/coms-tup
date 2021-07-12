@@ -4,14 +4,14 @@
 
 using namespace std;
 
-User::User(int32_t createdBy) : createdBy(createdBy), createdOn("2022-02-22")
+User::User(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 }
 
 User::User(const string &username, const string &firstName, const string &lastName, int32_t createdBy,
-		   ACCESS_LEVEL accessLevel) :
-	createdBy(createdBy), createdOn("2022-02-22")
+		   ACCESS_LEVEL accessLevel, DBManager &db) :
+	createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 
@@ -19,6 +19,22 @@ User::User(const string &username, const string &firstName, const string &lastNa
 	setFirstName(firstName);
 	setLastName(lastName);
 	setAccessLevel(accessLevel);
+}
+
+User::User(DBManager &db, int32_t id, const string &username, const string &firstName, const string &lastName,
+		   nanodbc::timestamp createdOn, int32_t createdBy, nanodbc::timestamp lastChangedOn, int32_t lastChangedBy,
+		   ACCESS_LEVEL accessLevel) :
+	db(db),
+	id(id),
+	username(username),
+	firstName(firstName),
+	lastName(lastName),
+	createdOn(createdOn),
+	createdBy(createdBy),
+	lastChangedOn(lastChangedOn),
+	lastChangedBy(lastChangedBy),
+	accessLevel(accessLevel)
+{
 }
 
 void User::setUsername(const string &username, int32_t changedBy)
@@ -45,6 +61,11 @@ void User::setAccessLevel(ACCESS_LEVEL accessLevel, int32_t changedBy)
 	touch(*this, changedBy);
 }
 
+int32_t User::getID() const
+{
+	return id;
+}
+
 string User::getUsername() const
 {
 	return username;
@@ -63,6 +84,26 @@ string User::getLastName() const
 User::ACCESS_LEVEL User::getAccessLevel() const
 {
 	return accessLevel;
+}
+
+nanodbc::timestamp User::getCreatedOn() const
+{
+	return createdOn;
+}
+
+int32_t User::getCreatedBy() const
+{
+	return createdBy;
+}
+
+nanodbc::timestamp User::getLastChangedOn() const
+{
+	return lastChangedOn;
+}
+
+int32_t User::getLastChangedBy() const
+{
+	return lastChangedBy;
 }
 
 void User::setUsername(const string &username)

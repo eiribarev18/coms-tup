@@ -33,6 +33,12 @@
     <ClCompile Include="WorkLog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DBManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="User.h">
@@ -51,6 +57,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WorkLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="env.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DBManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

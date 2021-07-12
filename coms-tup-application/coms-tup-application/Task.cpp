@@ -2,14 +2,16 @@
 
 #include "utils.h"
 
-Task::Task(int32_t createdBy) : createdBy(createdBy), createdOn("2022-02-22")
+using namespace std;
+
+Task::Task(int32_t createdBy, DBManager &db) : createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 }
 
 Task::Task(int32_t projectID, int32_t assigneeID, const std::string &title, const std::string &description,
-		   STATUS status, int32_t createdBy) :
-	createdBy(createdBy), createdOn("2022-02-22")
+		   STATUS status, int32_t createdBy, DBManager &db) :
+	createdBy(createdBy), createdOn(db.getDate()), db(db), id(0)
 {
 	touch(*this, createdBy);
 
@@ -18,6 +20,23 @@ Task::Task(int32_t projectID, int32_t assigneeID, const std::string &title, cons
 	setTitle(title);
 	setDescription(description);
 	setStatus(status);
+}
+
+Task::Task(DBManager &db, int32_t id, int32_t projectID, int32_t assigneeID, const string &title,
+		   const string &description, STATUS status, nanodbc::timestamp createdOn, int32_t createdBy,
+		   nanodbc::timestamp lastChangedOn, int32_t lastChangedBy) :
+	db(db),
+	id(id),
+	projectID(projectID),
+	assigneeID(assigneeID),
+	title(title),
+	description(description),
+	status(status),
+	createdOn(createdOn),
+	createdBy(createdBy),
+	lastChangedOn(lastChangedOn),
+	lastChangedBy(lastChangedBy)
+{
 }
 
 void Task::setProjectID(int32_t projectID, int32_t changedBy)
@@ -55,6 +74,11 @@ void Task::setStatus(STATUS status, int32_t changedBy)
 	setStatus(status);
 }
 
+int32_t Task::getID() const
+{
+	return id;
+}
+
 int32_t Task::getProjectID() const
 {
 	return projectID;
@@ -65,12 +89,12 @@ int32_t Task::getAssigneeID() const
 	return assigneeID;
 }
 
-std::string Task::getTitle() const
+string Task::getTitle() const
 {
 	return title;
 }
 
-std::string Task::getDescription() const
+string Task::getDescription() const
 {
 	return description;
 }
@@ -78,6 +102,26 @@ std::string Task::getDescription() const
 Task::STATUS Task::getStatus() const
 {
 	return status;
+}
+
+nanodbc::timestamp Task::getCreatedOn() const
+{
+	return createdOn;
+}
+
+int32_t Task::getCreatedBy() const
+{
+	return createdBy;
+}
+
+nanodbc::timestamp Task::getLastChangedOn() const
+{
+	return lastChangedOn;
+}
+
+int32_t Task::getLastChangedBy() const
+{
+	return lastChangedBy;
 }
 
 void Task::setProjectID(int32_t projectID)
