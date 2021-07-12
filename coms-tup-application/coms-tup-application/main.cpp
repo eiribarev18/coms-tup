@@ -1,9 +1,11 @@
 #include "DBManager.h"
+#include "env.h"
 
 #include <iostream>
+
 using namespace std;
+
 int main()
 {
-	DBManager dbm(
-		"Driver={ODBC Driver 17 for SQL Server};Server=.\\SQLExpress;Database=coms-tup-db;Trusted_Connection=yes;");
+	DBManager dbm(CT_DRIVER, CT_SERVER, CT_DATABASE);
 }

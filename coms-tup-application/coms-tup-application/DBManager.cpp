@@ -11,6 +11,11 @@ DBManager::DBManager(const string &connectionString)
 	connection.connect(connectionString);
 }
 
+DBManager::DBManager(const std::string &driver, const std::string &server, const std::string &database)
+{
+	connection.connect("Driver=" + driver + ";Server=" + server + ";Database=" + database + ";Trusted_Connection=yes;");
+}
+
 bool DBManager::insert(const Project &project)
 {
 	try {

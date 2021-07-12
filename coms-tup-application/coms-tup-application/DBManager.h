@@ -14,6 +14,7 @@ class DBManager {
   public:
 	DBManager() = default;
 	DBManager(const std::string &connectionString);
+	DBManager(const std::string &driver, const std::string &server, const std::string &database);
 
 	bool insert(const Project &project);
 	bool insert(const Task &task);
