@@ -1,5 +1,6 @@
 #include "console_io.h"
 
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 
@@ -39,6 +40,36 @@ size_t showMenuOptions(const std::vector<MENU_OPTION> &options, const User &logg
 	}
 
 	return --num;
+}
+
+size_t getMenuOptionChoice(const std::vector<MENU_OPTION> &options, const User &loggedUser)
+{
+	size_t numberOfValidOptions = count_if(options.begin(), options.end(), [loggedUser](const MENU_OPTION &option) {
+		return option.requiredAccessLevel <= loggedUser.getAccessLevel();
+	});
+
+	size_t choice;
+
+	while (true) {
+		cout << "Enter choice (1 - " << numberOfValidOptions << "): ";
+		try {
+			getUnsignedNumber(choice, numberOfValidOptions, 1);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	for (size_t i = 0, temp=choice; temp; i++, temp--) {
+		if (options[i].requiredAccessLevel > loggedUser.getAccessLevel()) {
+			choice++;
+			temp++;
+		}
+	}
+
+	return choice - 1;
 }
 
 bool loginMenu(DBManager &db)
@@ -90,6 +121,8 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 								   {"Exit program", User::ACCESS_LEVEL::USER}};
 
 	showMenuOptions(options, loggedUser);
+
+	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
 
 	return false;
 }
