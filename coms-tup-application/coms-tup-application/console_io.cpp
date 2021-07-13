@@ -1,9 +1,23 @@
 #include "console_io.h"
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 
 using namespace std;
+
+size_t showMenuOptions(const std::vector<MENU_OPTION> &options, const User &loggedUser)
+{
+	size_t num = 1;
+
+	for (auto option : options) {
+		if (option.requiredAccessLevel <= loggedUser.getAccessLevel()) {
+			cout << num << ". " << option.label << endl;
+			num++;
+		}
+	}
+
+	return --num;
+}
 
 bool loginMenu(DBManager &db)
 {
