@@ -40,7 +40,7 @@ bool loginMenu(DBManager &db)
 	}
 	catch (runtime_error &e) {
 		if (!strcmp(e.what(), "No user with matching username and password exists")) {
-			cout<<e.what();
+			cout << e.what();
 			printNewlines(2);
 
 			return true;
@@ -49,7 +49,25 @@ bool loginMenu(DBManager &db)
 		throw e;
 	}
 
+	User loggedUser = db.getByID(loggedUser, id);
+	bool showAgain = false;
 
+	while (mainMenu(db, loggedUser, showAgain)) {};
+
+	return showAgain;
+}
+
+bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
+{
+	vector<MENU_OPTION> options = {{"User Management", User::ACCESS_LEVEL::USER},
+								   {"Team Management", User::ACCESS_LEVEL::USER},
+								   {"Project Management", User::ACCESS_LEVEL::USER},
+								   {"Task Management", User::ACCESS_LEVEL::USER},
+								   {"Work Log Management", User::ACCESS_LEVEL::USER},
+								   {"Log out", User::ACCESS_LEVEL::USER},
+								   {"Exit program", User::ACCESS_LEVEL::USER}};
+
+	showMenuOptions(options, loggedUser);
 
 	return false;
 }

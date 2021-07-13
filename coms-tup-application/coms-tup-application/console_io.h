@@ -13,6 +13,8 @@ size_t showMenuOptions(const std::vector<MENU_OPTION> &options, const User &logg
 
 bool loginMenu(DBManager &db);
 
+bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin);
+
 void clearConsole();
 void toggleEcho();
 void printNewlines(unsigned count = 1);
