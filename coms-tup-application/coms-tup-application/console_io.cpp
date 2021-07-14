@@ -1,32 +1,12 @@
 #include "console_io.h"
 
+#include "utils.h"
+
 #include <algorithm>
 #include <cstring>
 #include <iostream>
 
 using namespace std;
-
-void getUnsignedNumber(size_t &x, size_t maxValue = -1, size_t minValue = 0, char delimiter = '\n')
-{
-	std::string raw;
-
-	getline(cin, raw, delimiter);
-
-	for (size_t i = 0; i < raw.size(); i++) {
-		if (raw[i] < '0' or raw[i] > '9') throw runtime_error("Non-digit character encountered");
-	}
-
-	if (stoull(raw) > maxValue) {
-		throw out_of_range("Number " + to_string((unsigned long long)x) +
-						   " is larger than maxValue=" + to_string(maxValue));
-	}
-	if (stoull(raw) < minValue) {
-		throw out_of_range("Number " + to_string((unsigned long long)x) +
-						   " is smaller than minValue=" + to_string(maxValue));
-	}
-
-	x = stoull(raw);
-}
 
 size_t showMenuOptions(const std::vector<MENU_OPTION> &options, const User &loggedUser)
 {
@@ -42,18 +22,14 @@ size_t showMenuOptions(const std::vector<MENU_OPTION> &options, const User &logg
 	return --num;
 }
 
-size_t getMenuOptionChoice(const std::vector<MENU_OPTION> &options, const User &loggedUser)
+size_t getMenuOptionChoice(size_t maxChoice)
 {
-	size_t numberOfValidOptions = count_if(options.begin(), options.end(), [loggedUser](const MENU_OPTION &option) {
-		return option.requiredAccessLevel <= loggedUser.getAccessLevel();
-	});
-
 	size_t choice;
 
 	while (true) {
-		cout << "Enter choice (1 - " << numberOfValidOptions << "): ";
+		cout << "Enter choice (1 - " << maxChoice << "): ";
 		try {
-			getUnsignedNumber(choice, numberOfValidOptions, 1);
+			getUnsignedNumber(choice, maxChoice, 1);
 		}
 		catch (...) {
 			cout << "Invalid input!" << endl;
@@ -61,6 +37,17 @@ size_t getMenuOptionChoice(const std::vector<MENU_OPTION> &options, const User &
 		}
 		break;
 	}
+
+	return choice;
+}
+
+size_t getMenuOptionChoice(const std::vector<MENU_OPTION> &options, const User &loggedUser)
+{
+	size_t numberOfValidOptions = count_if(options.begin(), options.end(), [loggedUser](const MENU_OPTION &option) {
+		return option.requiredAccessLevel <= loggedUser.getAccessLevel();
+	});
+
+	size_t choice = getMenuOptionChoice(numberOfValidOptions);
 
 	for (size_t i = 0, temp = choice; temp; i++, temp--) {
 		if (options[i].requiredAccessLevel > loggedUser.getAccessLevel()) {
@@ -112,6 +99,10 @@ bool loginMenu(DBManager &db)
 
 bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 {
+	cout << "Logged in as: " << loggedUser.getUsername() << " - " << loggedUser.getFirstName() << " "
+		 << loggedUser.getLastName() << " (" << to_string(loggedUser.getAccessLevel()) << ")" << endl;
+	printNewlines();
+
 	vector<MENU_OPTION> options = {{"User Management", User::ACCESS_LEVEL::USER},
 								   {"Team Management", User::ACCESS_LEVEL::USER},
 								   {"Project Management", User::ACCESS_LEVEL::USER},
@@ -124,8 +115,11 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 
 	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
 
+	clearConsole();
+
 	switch (chosenOptionIndex) {
 		case 0:
+			while (userManagementMenu(db, loggedUser)) {};
 			break;
 		case 1:
 			break;
@@ -145,4 +139,184 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 	clearConsole();
 
 	return true;
+}
+
+bool userManagementMenu(DBManager &db, User &loggedUser)
+{
+	vector<MENU_OPTION> options = {{"List users", User::ACCESS_LEVEL::USER},
+								   {"Create user", User::ACCESS_LEVEL::ADMIN},
+								   {"Edit user", User::ACCESS_LEVEL::ADMIN},
+								   {"Delete user", User::ACCESS_LEVEL::ADMIN},
+								   {"Back", User::ACCESS_LEVEL::USER}};
+
+	showMenuOptions(options, loggedUser);
+
+	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
+
+	clearConsole();
+
+	switch (chosenOptionIndex) {
+		case 0:
+			listTable<User>(bind(&DBManager::getAllUsers, &db));
+			printNewlines();
+			break;
+		case 1:
+			createUserMenu(db, loggedUser);
+			break;
+		case 2:
+			editUserMenu(db, loggedUser);
+			break;
+		case 3:
+			deleteUserMenu(db);
+			break;
+		case 4:
+			return false;
+	}
+
+	return true;
+}
+
+void createUserMenu(DBManager &db, User &loggedUser)
+{
+	User newUser(loggedUser.getID(), db);
+	string temp;
+
+	cout << "--- New User ---" << endl;
+	printNewlines();
+
+	cout << "Username: ";
+	getline(cin, temp);
+	newUser.setUsername(temp, loggedUser.getID());
+
+	cout << "First name: ";
+	getline(cin, temp);
+	newUser.setFirstName(temp, loggedUser.getID());
+
+	cout << "Surname: ";
+	getline(cin, temp);
+	newUser.setLastName(temp, loggedUser.getID());
+
+	cout << "Password: ";
+	toggleEcho();
+	getline(cin, temp);
+	toggleEcho();
+	printNewlines();
+
+	clearConsole();
+
+	if (db.insert(newUser, temp))
+		cout << "User successfully added!" << endl;
+	else
+		cout << "Failed to add user" << endl;
+
+	printNewlines();
+}
+
+void deleteUserMenu(DBManager &db)
+{
+	auto users = db.getAllUsers();
+	int32_t choice;
+
+	listTable(users);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose user to delete (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (users.find(choice) == users.end()) {
+		cout << "No user with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	if (db.deleteByID(users.at(choice)))
+		cout << "User deleted successfully!" << endl;
+	else
+		cout << "Could not delete user" << endl;
+
+	printNewlines();
+}
+
+void editUserMenu(DBManager &db, User &loggedUser)
+{
+	auto users = db.getAllUsers();
+	int32_t choice;
+
+	listTable(users);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose user to edit (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (users.find(choice) == users.end()) {
+		cout << "No user with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	User userToEdit = users.at(choice);
+	string temp, newPassword;
+
+	cout << "--- Edit user " << userToEdit.getUsername() << " ---" << endl;
+	printNewlines();
+	cout << "After each prompt the current value will be shown in parenthesis.\n"
+		 << "Leave empty if you don't wish to change it." << endl;
+	printNewlines();
+
+	cout << "Username (" << userToEdit.getUsername() << "): ";
+	getline(cin, temp);
+	if (temp.size()) userToEdit.setUsername(temp, loggedUser.getID());
+
+	cout << "Password (NOT SHOWN): ";
+	toggleEcho();
+	getline(cin, newPassword);
+	toggleEcho();
+	cout << endl;
+
+	cout << "Name (" << userToEdit.getFirstName() << "): ";
+	getline(cin, temp);
+	if (temp.size()) userToEdit.setFirstName(temp, loggedUser.getID());
+
+	cout << "Surname (" << userToEdit.getLastName() << "): ";
+	getline(cin, temp);
+	if (temp.size()) userToEdit.setLastName(temp, loggedUser.getID());
+
+	clearConsole();
+
+	if (newPassword.size()) {
+		if (db.updateByID(userToEdit, newPassword)) {
+			cout << "User updated successfully!" << endl;
+			return;
+		}
+		cout << "Could not update user" << endl;
+	}
+	if (db.updateByID(userToEdit)) {
+		cout << "User updated successfully!" << endl;
+		return;
+	}
+	cout << "Could not update user" << endl;
 }

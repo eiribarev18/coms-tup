@@ -12,3 +12,4 @@ void touch(T &element, int32_t changedBy)
 }
 
 std::string to_string(nanodbc::timestamp timestamp, bool includeTime = true);
+std::string to_string(User::ACCESS_LEVEL accessLevel);
