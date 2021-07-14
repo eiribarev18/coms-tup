@@ -50,6 +50,8 @@ class DBManager {
 
 	std::map<int32_t, User> getMembersOfTeam(const Team &team);
 
+	std::map<int32_t, Project> getProjectsAssignedToUser(const User &user);
+
 	int32_t getIDWithCredentials(const std::string &username, const std::string &password);
 
 	nanodbc::timestamp getDate(bool includeTime = false);

@@ -164,6 +164,8 @@ bool projectManagementMenu(DBManager &db, User &loggedUser)
 			printNewlines();
 			break;
 		case 1:
+			listTable<Project>(bind(&DBManager::getProjectsAssignedToUser, &db, loggedUser));
+			printNewlines();
 			break;
 		case 2:
 			break;
