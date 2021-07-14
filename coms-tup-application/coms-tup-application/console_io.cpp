@@ -167,6 +167,7 @@ bool teamManagementMenu(DBManager &db, User &loggedUser)
 		case 2:
 			break;
 		case 3:
+			deleteTeamMenu(db);
 			break;
 		case 4:
 			return false;
@@ -228,6 +229,43 @@ void createTeamMenu(DBManager &db, User &loggedUser)
 		cout << "Team successfully added!" << endl;
 	else
 		cout << "Failed to add team" << endl;
+
+	printNewlines();
+}
+
+void deleteTeamMenu(DBManager &db)
+{
+	auto teams = db.getAllTeams();
+	int32_t choice;
+
+	listTable(teams);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose team to delete (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (teams.find(choice) == teams.end()) {
+		cout << "No team with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	if (db.deleteByID(teams.at(choice)))
+		cout << "Team deleted successfully!" << endl;
+	else
+		cout << "Could not delete team" << endl;
 
 	printNewlines();
 }
