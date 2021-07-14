@@ -1,5 +1,7 @@
 #include "console_io.h"
 
+#include "utils.h"
+
 #include <algorithm>
 #include <cstring>
 #include <iostream>
@@ -97,6 +99,10 @@ bool loginMenu(DBManager &db)
 
 bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 {
+	cout << "Logged in as: " << loggedUser.getUsername() << " - " << loggedUser.getFirstName() << " "
+		 << loggedUser.getLastName() << " (" << to_string(loggedUser.getAccessLevel()) << ")" << endl;
+	printNewlines();
+
 	vector<MENU_OPTION> options = {{"User Management", User::ACCESS_LEVEL::USER},
 								   {"Team Management", User::ACCESS_LEVEL::USER},
 								   {"Project Management", User::ACCESS_LEVEL::USER},
