@@ -21,11 +21,17 @@ void printItem(const std::vector<TABLE_COLUMN> &tableColumns, const User &item);
 template <typename T>
 void listTable(std::function<std::map<int32_t, T>()> getItems)
 {
+	auto tableRows = getItems();
+
+	listTable(tableRows);
+}
+
+template <typename T>
+void listTable(const std::map<int32_t, T> &tableRows)
+{
 	using namespace std;
 
 	ios initialState(nullptr);
-
-	auto tableRows = getItems();
 
 	if (tableRows.empty()) {
 		cout << "There is nothing to list." << endl;
