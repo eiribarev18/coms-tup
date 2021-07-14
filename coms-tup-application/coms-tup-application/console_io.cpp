@@ -42,18 +42,14 @@ size_t showMenuOptions(const std::vector<MENU_OPTION> &options, const User &logg
 	return --num;
 }
 
-size_t getMenuOptionChoice(const std::vector<MENU_OPTION> &options, const User &loggedUser)
+size_t getMenuOptionChoice(size_t maxChoice)
 {
-	size_t numberOfValidOptions = count_if(options.begin(), options.end(), [loggedUser](const MENU_OPTION &option) {
-		return option.requiredAccessLevel <= loggedUser.getAccessLevel();
-	});
-
 	size_t choice;
 
 	while (true) {
-		cout << "Enter choice (1 - " << numberOfValidOptions << "): ";
+		cout << "Enter choice (1 - " << maxChoice << "): ";
 		try {
-			getUnsignedNumber(choice, numberOfValidOptions, 1);
+			getUnsignedNumber(choice, maxChoice, 1);
 		}
 		catch (...) {
 			cout << "Invalid input!" << endl;
@@ -61,6 +57,17 @@ size_t getMenuOptionChoice(const std::vector<MENU_OPTION> &options, const User &
 		}
 		break;
 	}
+
+	return choice;
+}
+
+size_t getMenuOptionChoice(const std::vector<MENU_OPTION> &options, const User &loggedUser)
+{
+	size_t numberOfValidOptions = count_if(options.begin(), options.end(), [loggedUser](const MENU_OPTION &option) {
+		return option.requiredAccessLevel <= loggedUser.getAccessLevel();
+	});
+
+	size_t choice = getMenuOptionChoice(numberOfValidOptions);
 
 	for (size_t i = 0, temp = choice; temp; i++, temp--) {
 		if (options[i].requiredAccessLevel > loggedUser.getAccessLevel()) {

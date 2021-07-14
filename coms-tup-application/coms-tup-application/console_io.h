@@ -11,6 +11,7 @@ struct MENU_OPTION {
 };
 
 size_t showMenuOptions(const std::vector<MENU_OPTION> &options, const User &loggedUser);
+size_t getMenuOptionChoice(size_t maxChoice);
 size_t getMenuOptionChoice(const std::vector<MENU_OPTION> &options, const User &loggedUser);
 
 bool loginMenu(DBManager &db);
