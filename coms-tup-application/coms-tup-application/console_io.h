@@ -19,6 +19,8 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin);
 
 bool userManagementMenu(DBManager &db, User &loggedUser);
 
+void createUserMenu(DBManager &db, User &loggedUser);
+
 void clearConsole();
 void toggleEcho();
 void printNewlines(unsigned count = 1);

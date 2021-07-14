@@ -170,6 +170,7 @@ bool userManagementMenu(DBManager &db, User &loggedUser)
 			printNewlines();
 			break;
 		case 1:
+			createUserMenu(db, loggedUser);
 			break;
 		case 2:
 			break;
@@ -180,4 +181,40 @@ bool userManagementMenu(DBManager &db, User &loggedUser)
 	}
 
 	return true;
+}
+
+void createUserMenu(DBManager &db, User &loggedUser)
+{
+	User newUser(loggedUser.getID(), db);
+	string temp;
+
+	cout << "--- New User ---" << endl;
+	printNewlines();
+
+	cout << "Username: ";
+	getline(cin, temp);
+	newUser.setUsername(temp, loggedUser.getID());
+
+	cout << "First name: ";
+	getline(cin, temp);
+	newUser.setFirstName(temp, loggedUser.getID());
+
+	cout << "Surname: ";
+	getline(cin, temp);
+	newUser.setLastName(temp, loggedUser.getID());
+
+	cout << "Password: ";
+	toggleEcho();
+	getline(cin, temp);
+	toggleEcho();
+	printNewlines();
+
+	clearConsole();
+
+	if (db.insert(newUser, temp))
+		cout << "User successfully added!" << endl;
+	else
+		cout << "Failed to add user" << endl;
+
+	printNewlines();
 }
