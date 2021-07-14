@@ -160,6 +160,7 @@ bool userManagementMenu(DBManager &db, User &loggedUser)
 		case 2:
 			break;
 		case 3:
+			deleteUserMenu(db);
 			break;
 		case 4:
 			return false;
@@ -200,6 +201,43 @@ void createUserMenu(DBManager &db, User &loggedUser)
 		cout << "User successfully added!" << endl;
 	else
 		cout << "Failed to add user" << endl;
+
+	printNewlines();
+}
+
+void deleteUserMenu(DBManager &db)
+{
+	auto users = db.getAllUsers();
+	int32_t choice;
+
+	listTable(users);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose user to delete (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (users.find(choice) == users.end()) {
+		cout << "No user with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	if (db.deleteByID(users.at(choice)))
+		cout << "User deleted successfully!" << endl;
+	else
+		cout << "Could not delete user" << endl;
 
 	printNewlines();
 }
