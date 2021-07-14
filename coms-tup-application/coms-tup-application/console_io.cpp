@@ -162,6 +162,7 @@ bool teamManagementMenu(DBManager &db, User &loggedUser)
 			printNewlines();
 			break;
 		case 1:
+			createTeamMenu(db, loggedUser);
 			break;
 		case 2:
 			break;
@@ -207,6 +208,28 @@ bool userManagementMenu(DBManager &db, User &loggedUser)
 	}
 
 	return true;
+}
+
+void createTeamMenu(DBManager &db, User &loggedUser)
+{
+	Team newTeam(loggedUser.getID(), db);
+	string temp;
+
+	cout << "--- New Team ---" << endl;
+	printNewlines();
+
+	cout << "Name: ";
+	getline(cin, temp);
+	newTeam.setName(temp, loggedUser.getID());
+
+	clearConsole();
+
+	if (db.insert(newTeam))
+		cout << "Team successfully added!" << endl;
+	else
+		cout << "Failed to add team" << endl;
+
+	printNewlines();
 }
 
 void createUserMenu(DBManager &db, User &loggedUser)

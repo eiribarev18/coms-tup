@@ -21,6 +21,8 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin);
 bool teamManagementMenu(DBManager &db, User &loggedUser);
 bool userManagementMenu(DBManager &db, User &loggedUser);
 
+void createTeamMenu(DBManager &db, User &loggedUser);
+
 void createUserMenu(DBManager &db, User &loggedUser);
 void deleteUserMenu(DBManager &db);
 void editUserMenu(DBManager &db, User &loggeduser);
