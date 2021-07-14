@@ -571,7 +571,7 @@ bool DBManager::assignTeamMember(const Team &team, const User &user)
 		statement.execute();
 	}
 	catch (exception &e) {
-		cerr<<e.what()<<endl;
+		cerr << e.what() << endl;
 		return false;
 	}
 
@@ -938,16 +938,16 @@ map<int32_t, User> DBManager::getMembersOfTeam(const Team &team)
 		auto accessLevel = (User::ACCESS_LEVEL)resSet.get<int>(8);
 
 		members.emplace(id,
-					  User{*this,
-						   id,
-						   username,
-						   firstName,
-						   lastName,
-						   createdOn,
-						   createdBy,
-						   lastChangedOn,
-						   lastChangedBy,
-						   accessLevel});
+						User{*this,
+							 id,
+							 username,
+							 firstName,
+							 lastName,
+							 createdOn,
+							 createdBy,
+							 lastChangedOn,
+							 lastChangedBy,
+							 accessLevel});
 	}
 
 	return members;
