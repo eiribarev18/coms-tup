@@ -128,8 +128,10 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 			while (projectManagementMenu(db, loggedUser)) {};
 			break;
 		case 3:
+			cout << "This feature is currently unavailable :(" << endl;
 			break;
 		case 4:
+			cout << "This feature is currently unavailable :(" << endl;
 			break;
 		case 5:
 			showLogin = true;
@@ -137,8 +139,6 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 			clearConsole();
 			return false;
 	}
-
-	clearConsole();
 
 	return true;
 }
