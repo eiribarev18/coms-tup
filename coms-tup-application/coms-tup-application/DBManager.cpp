@@ -750,6 +750,55 @@ WorkLog DBManager::getByID(WorkLog &workLog, int32_t id)
 	}
 }
 
+map<int32_t, User> DBManager::getAllUsers()
+{
+	map<int32_t, User> users;
+
+	nanodbc::statement statement(connection);
+
+	nanodbc::prepare(statement, NANODBC_TEXT(R"(
+		SELECT
+			Id,
+			Username,
+			FirstName,
+			LastName,
+			CreatedOn,
+			CreatedBy,
+			LastChangedOn,
+			LastChangedBy,
+			AccessLevel
+		FROM Users;
+	)"));
+
+	auto resSet = statement.execute();
+
+	while (resSet.next()) {
+		auto id = resSet.get<int32_t>(0);
+		const auto &username = resSet.get<string>(1);
+		const auto &firstName = resSet.get<string>(2);
+		const auto &lastName = resSet.get<string>(3);
+		auto createdOn = resSet.get<nanodbc::timestamp>(4);
+		auto createdBy = resSet.get<int32_t>(5);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(6);
+		auto lastChangedBy = resSet.get<int32_t>(7);
+		auto accessLevel = (User::ACCESS_LEVEL)resSet.get<int>(8);
+
+		users.emplace(id,
+					  User{*this,
+						   id,
+						   username,
+						   firstName,
+						   lastName,
+						   createdOn,
+						   createdBy,
+						   lastChangedOn,
+						   lastChangedBy,
+						   accessLevel});
+	}
+
+	return users;
+}
+
 int32_t DBManager::getIDWithCredentials(const std::string &username, const std::string &password)
 {
 	nanodbc::statement statement(connection);
