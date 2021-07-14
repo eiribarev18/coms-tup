@@ -18,7 +18,18 @@ bool loginMenu(DBManager &db);
 
 bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin);
 
+bool teamManagementMenu(DBManager &db, User &loggedUser);
 bool userManagementMenu(DBManager &db, User &loggedUser);
+
+void createTeamMenu(DBManager &db, User &loggedUser);
+void deleteTeamMenu(DBManager &db);
+void chooseTeamToEditMenu(DBManager &db, User &loggedUser);
+
+bool editTeamMenu(DBManager &db, User &loggedUser, Team &teamToEdit);
+
+void editTeamNameMenu(DBManager &db, User &loggedUser, Team &teamToEdit);
+void assignTeamMemberMenu(DBManager &db, User &loggedUser, Team &teamToEdit);
+void dismissTeamMemberMenu(DBManager &db, User &loggedUser, Team &teamToEdit);
 
 void createUserMenu(DBManager &db, User &loggedUser);
 void deleteUserMenu(DBManager &db);

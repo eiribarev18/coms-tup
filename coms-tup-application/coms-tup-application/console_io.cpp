@@ -122,6 +122,7 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 			while (userManagementMenu(db, loggedUser)) {};
 			break;
 		case 1:
+			while (teamManagementMenu(db, loggedUser)) {};
 			break;
 		case 2:
 			break;
@@ -137,6 +138,41 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 	}
 
 	clearConsole();
+
+	return true;
+}
+
+bool teamManagementMenu(DBManager &db, User &loggedUser)
+{
+	vector<MENU_OPTION> options = {{"List teams", User::ACCESS_LEVEL::USER},
+								   {"Create team", User::ACCESS_LEVEL::ADMIN},
+								   {"Select team", User::ACCESS_LEVEL::USER},
+								   {"Delete team", User::ACCESS_LEVEL::ADMIN},
+								   {"Back", User::ACCESS_LEVEL::USER}};
+
+	showMenuOptions(options, loggedUser);
+
+	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
+
+	clearConsole();
+
+	switch (chosenOptionIndex) {
+		case 0:
+			listTable<Team>(bind(&DBManager::getAllTeams, &db));
+			printNewlines();
+			break;
+		case 1:
+			createTeamMenu(db, loggedUser);
+			break;
+		case 2:
+			chooseTeamToEditMenu(db, loggedUser);
+			break;
+		case 3:
+			deleteTeamMenu(db);
+			break;
+		case 4:
+			return false;
+	}
 
 	return true;
 }
@@ -174,6 +210,226 @@ bool userManagementMenu(DBManager &db, User &loggedUser)
 	}
 
 	return true;
+}
+
+void createTeamMenu(DBManager &db, User &loggedUser)
+{
+	Team newTeam(loggedUser.getID(), db);
+	string temp;
+
+	cout << "--- New Team ---" << endl;
+	printNewlines();
+
+	cout << "Name: ";
+	getline(cin, temp);
+	newTeam.setName(temp, loggedUser.getID());
+
+	clearConsole();
+
+	if (db.insert(newTeam))
+		cout << "Team successfully added!" << endl;
+	else
+		cout << "Failed to add team" << endl;
+
+	printNewlines();
+}
+
+void deleteTeamMenu(DBManager &db)
+{
+	auto teams = db.getAllTeams();
+	int32_t choice;
+
+	listTable(teams);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose team to delete (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (teams.find(choice) == teams.end()) {
+		cout << "No team with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	if (db.deleteByID(teams.at(choice)))
+		cout << "Team deleted successfully!" << endl;
+	else
+		cout << "Could not delete team" << endl;
+
+	printNewlines();
+}
+
+void chooseTeamToEditMenu(DBManager &db, User &loggedUser)
+{
+	auto teams = db.getAllTeams();
+	int32_t choice;
+
+	listTable(teams);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose team to select (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (teams.find(choice) == teams.end()) {
+		cout << "No team with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	Team teamToEdit = teams.at(choice);
+
+	while (editTeamMenu(db, loggedUser, teamToEdit)) {};
+}
+
+bool editTeamMenu(DBManager &db, User &loggedUser, Team &teamToEdit)
+{
+	cout << "--- Edit team " << teamToEdit.getName() << " ---" << endl;
+	printNewlines();
+
+	vector<MENU_OPTION> options = {{"Edit name", User::ACCESS_LEVEL::ADMIN},
+								   {"List members", User::ACCESS_LEVEL::USER},
+								   {"Assign member", User::ACCESS_LEVEL::ADMIN},
+								   {"Remove member", User::ACCESS_LEVEL::ADMIN},
+								   {"Back", User::ACCESS_LEVEL::USER}};
+
+	showMenuOptions(options, loggedUser);
+
+	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
+
+	clearConsole();
+
+	switch (chosenOptionIndex) {
+		case 0:
+			editTeamNameMenu(db, loggedUser, teamToEdit);
+			break;
+		case 1:
+			listTable<User>(bind(&DBManager::getMembersOfTeam, &db, teamToEdit));
+			printNewlines();
+			break;
+		case 2:
+			assignTeamMemberMenu(db, loggedUser, teamToEdit);
+			break;
+		case 3:
+			dismissTeamMemberMenu(db, loggedUser, teamToEdit);
+			break;
+		case 4:
+			return false;
+	}
+
+	return true;
+}
+
+void editTeamNameMenu(DBManager &db, User &loggedUser, Team &teamToEdit)
+{
+	string temp;
+
+	cout << "After the prompt the current value will be shown in parenthesis.\n"
+		 << "Leave empty if you don't wish to change it." << endl;
+	printNewlines();
+
+	cout << "Name (" << teamToEdit.getName() << "): ";
+	getline(cin, temp);
+	if (temp.size()) teamToEdit.setName(temp, loggedUser.getID());
+
+	clearConsole();
+}
+
+void assignTeamMemberMenu(DBManager &db, User &loggedUser, Team &teamToEdit)
+{
+	auto users = db.getAllUsers();
+	int32_t choice;
+
+	listTable(users);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose user to assign (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (users.find(choice) == users.end()) {
+		cout << "No user with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	if (db.assignTeamMember(teamToEdit, users.at(choice)))
+		cout << "User assigned successfully!" << endl;
+	else
+		cout << "Could not assign user" << endl;
+
+	printNewlines();
+}
+
+void dismissTeamMemberMenu(DBManager &db, User &loggedUser, Team &teamToEdit)
+{
+	auto users = db.getMembersOfTeam(teamToEdit);
+	int32_t choice;
+
+	listTable(users);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose user to assign (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (users.find(choice) == users.end()) {
+		cout << "No user with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	if (db.dismissTeamMember(teamToEdit, users.at(choice)))
+		cout << "User dismissed successfully!" << endl;
+	else
+		cout << "Could not dismiss user" << endl;
+
+	printNewlines();
 }
 
 void createUserMenu(DBManager &db, User &loggedUser)

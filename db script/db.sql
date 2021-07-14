@@ -1,59 +1,5 @@
 USE [coms-tup-db]
 GO
-ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [CK_Tasks_Status]
-GO
-ALTER TABLE [dbo].[WorkLogs] DROP CONSTRAINT [FK_WorkLogs_Users]
-GO
-ALTER TABLE [dbo].[WorkLogs] DROP CONSTRAINT [FK_WorkLogs_Tasks]
-GO
-ALTER TABLE [dbo].[UsersTeams] DROP CONSTRAINT [FK_UsersTeams_Users]
-GO
-ALTER TABLE [dbo].[UsersTeams] DROP CONSTRAINT [FK_UsersTeams_Teams]
-GO
-ALTER TABLE [dbo].[Users] DROP CONSTRAINT [FK_Users-LastChangedBy_Users]
-GO
-ALTER TABLE [dbo].[Users] DROP CONSTRAINT [FK_Users-CreatedBy_Users]
-GO
-ALTER TABLE [dbo].[TeamsProjects] DROP CONSTRAINT [FK_TeamsProjects_Teams]
-GO
-ALTER TABLE [dbo].[TeamsProjects] DROP CONSTRAINT [FK_TeamsProjects_Projects]
-GO
-ALTER TABLE [dbo].[Teams] DROP CONSTRAINT [FK_Teams-LastChangedBy_Users]
-GO
-ALTER TABLE [dbo].[Teams] DROP CONSTRAINT [FK_Teams-CreatedBy_Users]
-GO
-ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_Tasks-LastChangedBy_Users]
-GO
-ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_Tasks-CreatedBy_Users]
-GO
-ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_Tasks-AssigneeId_Users]
-GO
-ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [FK_Tasks_Projects]
-GO
-ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [FK_Projects-LastChangedBy_Users]
-GO
-ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [FK_Projects-CreatedBy_Users]
-GO
-ALTER TABLE [dbo].[WorkLogs] DROP CONSTRAINT [DF_WorkLogs_IsDeleted]
-GO
-ALTER TABLE [dbo].[Users] DROP CONSTRAINT [DF_Users_IsDeleted]
-GO
-ALTER TABLE [dbo].[Users] DROP CONSTRAINT [DF_Users_IsAdmin]
-GO
-ALTER TABLE [dbo].[Users] DROP CONSTRAINT [DF_Users_CreatedOn]
-GO
-ALTER TABLE [dbo].[Teams] DROP CONSTRAINT [DF_Teams_IsDeleted]
-GO
-ALTER TABLE [dbo].[Teams] DROP CONSTRAINT [DF_Teams_CreatedOn]
-GO
-ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [DF_Tasks_IsDeleted]
-GO
-ALTER TABLE [dbo].[Tasks] DROP CONSTRAINT [DF_Tasks_CreatedOn]
-GO
-ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [DF_Projects_IsDeleted]
-GO
-ALTER TABLE [dbo].[Projects] DROP CONSTRAINT [DF_Projects_CreatedOn]
-GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WorkLogs]') AND type in (N'U'))
 DROP TABLE [dbo].[WorkLogs]
 GO
@@ -277,6 +223,37 @@ CREATE TABLE [dbo].[WorkLogs](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE   VIEW [dbo].[vUsersTeams]
+AS
+SELECT
+	u.Id AS UserId,
+	u.[Username],
+	u.FirstName,
+	u.LastName,
+	u.AccessLevel,
+	u.CreatedOn AS UserCreatedOn,
+	u.CreatedBy AS UserCreatedBy,
+	u.LastChangedOn AS UserLastChangedOn,
+	u.LastChangedBy AS UserLastChangedBy,
+	u.IsDeleted AS UserIsDeleted,
+	t.Id AS TeamId,
+	t.[Name] AS TeamName,
+	t.CreatedOn AS TeamCreatedOn,
+	t.CreatedBy AS TeamCreatedBy,
+	t.LastChangedOn AS TeamLastChangedOn,
+	t.LastChangedBy AS TeamLastChangedBy,
+	t.IsDeleted AS TeamIsDeleted
+FROM Users u
+INNER JOIN UsersTeams ut
+ON u.Id = ut.UserId
+INNER JOIN Teams t
+ON t.id = ut.TeamId;
+GO
 SET IDENTITY_INSERT [dbo].[Projects] ON 
 GO
 INSERT [dbo].[Projects] ([Id], [Name], [Description], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [IsDeleted]) VALUES (1, N'CoMS TUP', NULL, CAST(N'2021-07-11' AS Date), 1, CAST(N'2021-07-11T07:50:00.0000000' AS DateTime2), 1, 0)
@@ -299,9 +276,17 @@ SET IDENTITY_INSERT [dbo].[Teams] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Users] ON 
 GO
-INSERT [dbo].[Users] ([Id], [Username], [Password], [FirstName], [LastName], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [AccessLevel], [IsDeleted]) VALUES (1, N'admin', N'adminpass', N'Panelcho', N'Adminov', CAST(N'2021-07-11' AS Date), 1, CAST(N'2021-07-11T07:48:22.0000000' AS DateTime2), 1, 2, 0)
+INSERT [dbo].[Users] ([Id], [Username], [Password], [FirstName], [LastName], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [AccessLevel], [IsDeleted]) VALUES (1, N'admin', N'adminpass', N'Panelcho', N'Adminov', CAST(N'2021-07-11' AS Date), 2, CAST(N'2021-07-11T07:48:22.0000000' AS DateTime2), 2, 1, 0)
+GO
+INSERT [dbo].[Users] ([Id], [Username], [Password], [FirstName], [LastName], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [AccessLevel], [IsDeleted]) VALUES (2, N'root', N'rootpass', N'The One', N'Above', CAST(N'2021-07-13' AS Date), 2, CAST(N'2021-07-13T08:22:22.0000000' AS DateTime2), 2, 2, 0)
+GO
+INSERT [dbo].[Users] ([Id], [Username], [Password], [FirstName], [LastName], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [AccessLevel], [IsDeleted]) VALUES (3, N'mitko', N'not secure', N'Dimitko', N'Trimitko', CAST(N'2021-07-13' AS Date), 1, CAST(N'2021-07-14T13:28:06.0000000' AS DateTime2), 1, 0, 0)
+GO
+INSERT [dbo].[Users] ([Id], [Username], [Password], [FirstName], [LastName], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [AccessLevel], [IsDeleted]) VALUES (4, N'test', N'testpass', N'Test', N'Testing', CAST(N'2021-07-14' AS Date), 1, CAST(N'2021-07-14T10:06:24.0000000' AS DateTime2), 1, 0, 1)
 GO
 SET IDENTITY_INSERT [dbo].[Users] OFF
+GO
+INSERT [dbo].[UsersTeams] ([UserId], [TeamId]) VALUES (3, 1)
 GO
 SET IDENTITY_INSERT [dbo].[WorkLogs] ON 
 GO
