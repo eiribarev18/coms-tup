@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DBManager.h"
+#include "listTable.h"
 
 #include <vector>
 

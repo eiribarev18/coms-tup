@@ -151,6 +151,7 @@
     <ClCompile Include="console_utils.cpp" />
     <ClCompile Include="console_io.cpp" />
     <ClCompile Include="DBManager.cpp" />
+    <ClCompile Include="listTable.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Project.cpp" />
     <ClCompile Include="Task.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="console_io.h" />
     <ClInclude Include="DBManager.h" />
     <ClInclude Include="env.h" />
+    <ClInclude Include="listTable.h" />
     <ClInclude Include="Project.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="Team.h" />

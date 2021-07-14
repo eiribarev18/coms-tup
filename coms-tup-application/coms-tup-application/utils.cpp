@@ -23,3 +23,15 @@ string to_string(nanodbc::timestamp timestamp, bool includeTime)
 
 	return out;
 }
+
+std::string to_string(User::ACCESS_LEVEL accessLevel)
+{
+	switch ((int)accessLevel) {
+		case 0:
+			return "USER";
+		case 1:
+			return "ADMIN";
+		case 2:
+			return "ROOT ADMIN";
+	}
+}

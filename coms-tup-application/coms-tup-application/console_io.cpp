@@ -166,6 +166,8 @@ bool userManagementMenu(DBManager &db, User &loggedUser)
 
 	switch (chosenOptionIndex) {
 		case 0:
+			listTable<User>(bind(&DBManager::getAllUsers, &db));
+			printNewlines();
 			break;
 		case 1:
 			break;

@@ -45,6 +45,9 @@
     <ClCompile Include="console_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="listTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="User.h">
@@ -72,6 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="console_io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="listTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
