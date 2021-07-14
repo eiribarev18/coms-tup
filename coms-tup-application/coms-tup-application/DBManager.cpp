@@ -564,7 +564,9 @@ Project DBManager::getByID(Project &project, int32_t id)
 				LastChangedBy,
 				[Description]
 			FROM Projects
-			WHERE Id = ?;
+			WHERE
+				Id = ?
+				AND IsDeleted = 0;
 		)"));
 
 		statement.bind(0, &id);
@@ -604,7 +606,9 @@ Task DBManager::getByID(Task &task, int32_t id)
 				LastChangedBy,
 				[Description]
 			FROM Tasks
-			WHERE Id = ?;
+			WHERE
+				Id = ?
+				AND IsDeleted = 0;
 		)"));
 
 		statement.bind(0, &id);
@@ -653,7 +657,9 @@ Team DBManager::getByID(Team &team, int32_t id)
 				LastChangedOn,
 				LastChangedBy
 			FROM Teams
-			WHERE Id = ?;
+			WHERE
+				Id = ?
+				AND IsDeleted = 0;
 		)"));
 
 		statement.bind(0, &id);
@@ -691,7 +697,9 @@ User DBManager::getByID(User &user, int32_t id)
 				LastChangedBy,
 				AccessLevel
 			FROM Users
-			WHERE Id = ?;
+			WHERE
+				Id = ?
+				AND IsDeleted = 0;
 		)"));
 
 		statement.bind(0, &id);
@@ -729,7 +737,9 @@ WorkLog DBManager::getByID(WorkLog &workLog, int32_t id)
 				[Date],
 				HoursSpent
 			FROM WorkLogs
-			WHERE Id = ?;
+			WHERE
+				Id = ?
+				AND IsDeleted = 0;
 		)"));
 
 		statement.bind(0, &id);
@@ -767,7 +777,8 @@ map<int32_t, User> DBManager::getAllUsers()
 			LastChangedOn,
 			LastChangedBy,
 			AccessLevel
-		FROM Users;
+		FROM Users
+		WHERE IsDeleted = 0;
 	)"));
 
 	auto resSet = statement.execute();
@@ -808,7 +819,8 @@ int32_t DBManager::getIDWithCredentials(const std::string &username, const std::
 		FROM Users
 		WHERE
 			Username = ?
-			AND [Password] = ?;
+			AND [Password] = ?
+			AND IsDeleted = 0;
 	)"));
 
 	statement.bind(0, username.c_str());
