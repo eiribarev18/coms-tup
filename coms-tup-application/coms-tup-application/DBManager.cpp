@@ -816,7 +816,43 @@ WorkLog DBManager::getByID(WorkLog &workLog, int32_t id)
 	}
 }
 
-std::map<int32_t, Team> DBManager::getAllTeams()
+map<int32_t, Project> DBManager::getAllProjects()
+{
+	map<int32_t, Project> projects;
+
+	nanodbc::statement statement(connection);
+
+	nanodbc::prepare(statement, NANODBC_TEXT(R"(
+		SELECT
+			Id,
+			[Name],
+			CreatedOn,
+			CreatedBy,
+			LastChangedOn,
+			LastChangedBy,
+			[Description]
+		FROM Projects
+		WHERE IsDeleted = 0;
+	)"));
+
+	auto resSet = statement.execute();
+
+	while (resSet.next()) {
+		auto id = resSet.get<int32_t>(0);
+		const auto &name = resSet.get<string>(1);
+		auto createdOn = resSet.get<nanodbc::timestamp>(2);
+		auto createdBy = resSet.get<int32_t>(3);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(4);
+		auto lastChangedBy = resSet.get<int32_t>(5);
+		const auto &description = resSet.get<string>(6, "");
+
+		projects.emplace(id, Project{*this, id, name, description, createdOn, createdBy, lastChangedOn, lastChangedBy});
+	}
+
+	return projects;
+}
+
+map<int32_t, Team> DBManager::getAllTeams()
 {
 	map<int32_t, Team> teams;
 

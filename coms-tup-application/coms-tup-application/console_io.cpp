@@ -125,6 +125,7 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 			while (teamManagementMenu(db, loggedUser)) {};
 			break;
 		case 2:
+			while (projectManagementMenu(db, loggedUser)) {};
 			break;
 		case 3:
 			break;
@@ -138,6 +139,41 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 	}
 
 	clearConsole();
+
+	return true;
+}
+
+bool projectManagementMenu(DBManager &db, User &loggedUser)
+{
+	vector<MENU_OPTION> options = {{"List all projects", User::ACCESS_LEVEL::USER},
+								   {"List projects assigned to me", User::ACCESS_LEVEL::USER},
+								   {"Create project", User::ACCESS_LEVEL::USER},
+								   {"Select project", User::ACCESS_LEVEL::USER},
+								   {"Delete project", User::ACCESS_LEVEL::USER},
+								   {"Back", User::ACCESS_LEVEL::USER}};
+
+	showMenuOptions(options, loggedUser);
+
+	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
+
+	clearConsole();
+
+	switch (chosenOptionIndex) {
+		case 0:
+			listTable<Project>(bind(&DBManager::getAllProjects, &db));
+			printNewlines();
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			return false;
+	}
 
 	return true;
 }
