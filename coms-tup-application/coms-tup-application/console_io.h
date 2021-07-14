@@ -30,6 +30,8 @@ bool editProjectMenu(DBManager &db, User &loggedUser, Project &projectToEdit);
 
 void editProjectNameMenu(DBManager &db, User &loggedUser, Project &projectToEdit);
 void editProjectDescriptionMenu(DBManager &db, User &loggedUser, Project &projectToEdit);
+void assignTeamMenu(DBManager &db, User &loggedUser, Project &projectToEdit);
+void dismissTeamMenu(DBManager &db, User &loggedUser, Project &projectToEdit);
 
 void createTeamMenu(DBManager &db, User &loggedUser);
 void deleteTeamMenu(DBManager &db);
