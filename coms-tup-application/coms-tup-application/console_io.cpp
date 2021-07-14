@@ -171,6 +171,7 @@ bool projectManagementMenu(DBManager &db, User &loggedUser)
 			createProjectMenu(db, loggedUser);
 			break;
 		case 3:
+			chooseProjectToEditMenu(db, loggedUser);
 			break;
 		case 4:
 			deleteProjectMenu(db, loggedUser);
@@ -325,6 +326,110 @@ void deleteProjectMenu(DBManager &db, User &loggedUser)
 	printNewlines();
 }
 
+void chooseProjectToEditMenu(DBManager &db, User &loggedUser)
+{
+	auto projects = db.getAllProjects();
+	int32_t choice;
+
+	listTable(projects);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose project to select (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (projects.find(choice) == projects.end()) {
+		cout << "No project with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	Project projectToEdit = projects.at(choice);
+
+	while (editProjectMenu(db, loggedUser, projectToEdit)) {};
+}
+
+bool editProjectMenu(DBManager &db, User &loggedUser, Project &projectToEdit)
+{
+	const bool doesNotOwnProject = loggedUser.getID() != projectToEdit.getCreatedBy();
+
+	cout << "--- Edit project " << projectToEdit.getName() << " ---" << endl;
+	printNewlines();
+
+	vector<MENU_OPTION> options = {
+		{"Edit name", doesNotOwnProject ? User::ACCESS_LEVEL::ADMIN : User::ACCESS_LEVEL::USER},
+		{"Edit description", doesNotOwnProject ? User::ACCESS_LEVEL::ADMIN : User::ACCESS_LEVEL::USER},
+		{"List assigned teams", User::ACCESS_LEVEL::USER},
+		{"Assign team", doesNotOwnProject ? User::ACCESS_LEVEL::ADMIN : User::ACCESS_LEVEL::USER},
+		{"Dismiss team", doesNotOwnProject ? User::ACCESS_LEVEL::ADMIN : User::ACCESS_LEVEL::USER},
+		{"Back", User::ACCESS_LEVEL::USER}};
+
+	showMenuOptions(options, loggedUser);
+
+	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
+
+	clearConsole();
+
+	switch (chosenOptionIndex) {
+		case 0:
+			editProjectNameMenu(db, loggedUser, projectToEdit);
+			break;
+		case 1:
+			editProjectDescriptionMenu(db, loggedUser, projectToEdit);
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			return false;
+	}
+
+	return true;
+}
+
+void editProjectNameMenu(DBManager &db, User &loggedUser, Project &projectToEdit)
+{
+	string temp;
+
+	cout << "After the prompt the current value will be shown in parenthesis.\n"
+		 << "Leave empty if you don't wish to change it." << endl;
+	printNewlines();
+
+	cout << "Name (" << projectToEdit.getName() << "): ";
+	getline(cin, temp);
+	if (temp.size()) projectToEdit.setName(temp, loggedUser.getID());
+
+	clearConsole();
+}
+
+void editProjectDescriptionMenu(DBManager &db, User &loggedUser, Project &projectToEdit)
+{
+	string temp;
+
+	cout << "After the prompt the current value will be shown in parenthesis.\n"
+		 << "Leave empty if you wish to unset it." << endl;
+	printNewlines();
+
+	cout << "Description (" << projectToEdit.getDescription() << "): ";
+	getline(cin, temp);
+	projectToEdit.setDescription(temp, loggedUser.getID());
+
+	clearConsole();
+}
 
 void createTeamMenu(DBManager &db, User &loggedUser)
 {
