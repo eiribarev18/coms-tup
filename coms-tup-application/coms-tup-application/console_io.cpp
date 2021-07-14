@@ -168,6 +168,7 @@ bool projectManagementMenu(DBManager &db, User &loggedUser)
 			printNewlines();
 			break;
 		case 2:
+			createProjectMenu(db, loggedUser);
 			break;
 		case 3:
 			break;
@@ -248,6 +249,32 @@ bool userManagementMenu(DBManager &db, User &loggedUser)
 	}
 
 	return true;
+}
+
+void createProjectMenu(DBManager &db, User &loggedUser)
+{
+	Project newProject(loggedUser.getID(), db);
+	string temp;
+
+	cout << "--- New project ---" << endl;
+	printNewlines();
+
+	cout << "Name: ";
+	getline(cin, temp);
+	newProject.setName(temp, loggedUser.getID());
+
+	cout << "Description: ";
+	getline(cin, temp);
+	newProject.setDescription(temp, loggedUser.getID());
+
+	clearConsole();
+
+	if (db.insert(newProject))
+		cout << "Project successfully added!" << endl;
+	else
+		cout << "Failed to add project" << endl;
+
+	printNewlines();
 }
 
 void createTeamMenu(DBManager &db, User &loggedUser)

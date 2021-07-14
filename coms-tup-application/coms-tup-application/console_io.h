@@ -22,6 +22,8 @@ bool projectManagementMenu(DBManager &db, User &loggedUser);
 bool teamManagementMenu(DBManager &db, User &loggedUser);
 bool userManagementMenu(DBManager &db, User &loggedUser);
 
+void createProjectMenu(DBManager &db, User &loggedUser);
+
 void createTeamMenu(DBManager &db, User &loggedUser);
 void deleteTeamMenu(DBManager &db);
 void chooseTeamToEditMenu(DBManager &db, User &loggedUser);
