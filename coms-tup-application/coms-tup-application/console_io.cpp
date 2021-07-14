@@ -173,6 +173,7 @@ bool projectManagementMenu(DBManager &db, User &loggedUser)
 		case 3:
 			break;
 		case 4:
+			deleteProjectMenu(db, loggedUser);
 			break;
 		case 5:
 			return false;
@@ -276,6 +277,54 @@ void createProjectMenu(DBManager &db, User &loggedUser)
 
 	printNewlines();
 }
+
+void deleteProjectMenu(DBManager &db, User &loggedUser)
+{
+	auto projects = db.getAllProjects();
+	int32_t choice;
+
+	if (loggedUser.getAccessLevel() < User::ACCESS_LEVEL::ADMIN) {
+		for (auto it = projects.begin(); it != projects.end();) {
+			if (it->second.getCreatedBy() != loggedUser.getID())
+				it = projects.erase(it);
+			else
+				it++;
+		}
+	}
+
+	listTable(projects);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose project to delete (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (projects.find(choice) == projects.end()) {
+		cout << "Cannot delete project with ID " << choice << ".\n"
+			 << "It doesn't exist or you don't have permission to perform this action" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	if (db.deleteByID(projects.at(choice)))
+		cout << "Project deleted successfully!" << endl;
+	else
+		cout << "Could not delete project" << endl;
+
+	printNewlines();
+}
+
 
 void createTeamMenu(DBManager &db, User &loggedUser)
 {
