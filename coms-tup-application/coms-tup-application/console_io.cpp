@@ -62,7 +62,7 @@ size_t getMenuOptionChoice(const std::vector<MENU_OPTION> &options, const User &
 		break;
 	}
 
-	for (size_t i = 0, temp=choice; temp; i++, temp--) {
+	for (size_t i = 0, temp = choice; temp; i++, temp--) {
 		if (options[i].requiredAccessLevel > loggedUser.getAccessLevel()) {
 			choice++;
 			temp++;
@@ -123,6 +123,24 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 	showMenuOptions(options, loggedUser);
 
 	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
+
+	switch (chosenOptionIndex) {
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			showLogin = true;
+			break;
+	}
+
+	clearConsole();
 
 	return false;
 }
