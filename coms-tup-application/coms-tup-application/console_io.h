@@ -22,6 +22,7 @@ bool userManagementMenu(DBManager &db, User &loggedUser);
 
 void createUserMenu(DBManager &db, User &loggedUser);
 void deleteUserMenu(DBManager &db);
+void editUserMenu(DBManager &db, User &loggeduser);
 
 void clearConsole();
 void toggleEcho();

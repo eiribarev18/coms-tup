@@ -164,6 +164,7 @@ bool userManagementMenu(DBManager &db, User &loggedUser)
 			createUserMenu(db, loggedUser);
 			break;
 		case 2:
+			editUserMenu(db, loggedUser);
 			break;
 		case 3:
 			deleteUserMenu(db);
@@ -246,4 +247,76 @@ void deleteUserMenu(DBManager &db)
 		cout << "Could not delete user" << endl;
 
 	printNewlines();
+}
+
+void editUserMenu(DBManager &db, User &loggedUser)
+{
+	auto users = db.getAllUsers();
+	int32_t choice;
+
+	listTable(users);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose user to edit (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (users.find(choice) == users.end()) {
+		cout << "No user with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	User userToEdit = users.at(choice);
+	string temp, newPassword;
+
+	cout << "--- Edit user " << userToEdit.getUsername() << " ---" << endl;
+	printNewlines();
+	cout << "After each prompt the current value will be shown in parenthesis.\n"
+		 << "Leave empty if you don't wish to change it." << endl;
+	printNewlines();
+
+	cout << "Username (" << userToEdit.getUsername() << "): ";
+	getline(cin, temp);
+	if (temp.size()) userToEdit.setUsername(temp, loggedUser.getID());
+
+	cout << "Password (NOT SHOWN): ";
+	toggleEcho();
+	getline(cin, newPassword);
+	toggleEcho();
+	cout << endl;
+
+	cout << "Name (" << userToEdit.getFirstName() << "): ";
+	getline(cin, temp);
+	if (temp.size()) userToEdit.setFirstName(temp, loggedUser.getID());
+
+	cout << "Surname (" << userToEdit.getLastName() << "): ";
+	getline(cin, temp);
+	if (temp.size()) userToEdit.setLastName(temp, loggedUser.getID());
+
+	clearConsole();
+
+	if (newPassword.size()) {
+		if (db.updateByID(userToEdit, newPassword)) {
+			cout << "User updated successfully!" << endl;
+			return;
+		}
+		cout << "Could not update user" << endl;
+	}
+	if (db.updateByID(userToEdit)) {
+		cout << "User updated successfully!" << endl;
+		return;
+	}
+	cout << "Could not update user" << endl;
 }
