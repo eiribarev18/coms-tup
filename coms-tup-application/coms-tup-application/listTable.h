@@ -36,7 +36,7 @@ void listTable(const std::map<int32_t, T> &tableRows)
 	ios initialState(nullptr);
 
 	if (tableRows.empty()) {
-		cout << "There is nothing to list." << endl;
+		cout << "There is nothing to list." << endl << endl;
 		return;
 	}
 

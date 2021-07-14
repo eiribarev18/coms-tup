@@ -35,6 +35,9 @@ class DBManager {
 	bool deleteByID(const User &user);
 	bool deleteByID(const WorkLog &workLog);
 
+	bool assignTeamMember(const Team &team, const User &user);
+	bool dismissTeamMember(const Team &team, const User &user);
+
 	Project getByID(Project &project, int32_t id);
 	Task getByID(Task &task, int32_t id);
 	Team getByID(Team &team, int32_t id);
@@ -43,6 +46,8 @@ class DBManager {
 
 	std::map<int32_t, Team> getAllTeams();
 	std::map<int32_t, User> getAllUsers();
+
+	std::map<int32_t, User> getMembersOfTeam(const Team &team);
 
 	int32_t getIDWithCredentials(const std::string &username, const std::string &password);
 
