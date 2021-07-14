@@ -124,8 +124,11 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 
 	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
 
+	clearConsole();
+
 	switch (chosenOptionIndex) {
 		case 0:
+			while (userManagementMenu(db, loggedUser)) {};
 			break;
 		case 1:
 			break;
@@ -143,6 +146,36 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 	}
 
 	clearConsole();
+
+	return true;
+}
+
+bool userManagementMenu(DBManager &db, User &loggedUser)
+{
+	vector<MENU_OPTION> options = {{"List users", User::ACCESS_LEVEL::USER},
+								   {"Create user", User::ACCESS_LEVEL::ADMIN},
+								   {"Edit user", User::ACCESS_LEVEL::ADMIN},
+								   {"Delete user", User::ACCESS_LEVEL::ADMIN},
+								   {"Back", User::ACCESS_LEVEL::USER}};
+
+	showMenuOptions(options, loggedUser);
+
+	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
+
+	clearConsole();
+
+	switch (chosenOptionIndex) {
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			return false;
+	}
 
 	return true;
 }
