@@ -137,10 +137,12 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 			break;
 		case 5:
 			showLogin = true;
-			break;
+		case 6:
+			clearConsole();
+			return false;
 	}
 
 	clearConsole();
 
-	return false;
+	return true;
 }
