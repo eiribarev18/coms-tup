@@ -40,6 +40,8 @@ class DBManager {
 	User getByID(User &user, int32_t id);
 	WorkLog getByID(WorkLog &workLog, int32_t id);
 
+	int32_t getIDWithCredentials(const std::string &username, const std::string &password);
+
 	nanodbc::timestamp getDate(bool includeTime = false);
 
   private:

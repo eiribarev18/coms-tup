@@ -750,6 +750,27 @@ WorkLog DBManager::getByID(WorkLog &workLog, int32_t id)
 	}
 }
 
+int32_t DBManager::getIDWithCredentials(const std::string &username, const std::string &password)
+{
+	nanodbc::statement statement(connection);
+
+	nanodbc::prepare(statement, NANODBC_TEXT(R"(
+		SELECT Id
+		FROM Users
+		WHERE
+			Username = ?
+			AND [Password] = ?;
+	)"));
+
+	statement.bind(0, username.c_str());
+	statement.bind(1, password.c_str());
+
+	auto resSet = statement.execute();
+	if (!resSet.next()) throw runtime_error("No user with matching username and password exists");
+
+	return resSet.get<int32_t>(0);
+}
+
 nanodbc::timestamp DBManager::getDate(bool includeTime)
 {
 	nanodbc::statement statement(connection);

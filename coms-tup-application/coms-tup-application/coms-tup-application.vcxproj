@@ -148,6 +148,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="console_utils.cpp" />
+    <ClCompile Include="console_io.cpp" />
     <ClCompile Include="DBManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Project.cpp" />
@@ -158,6 +160,7 @@
     <ClCompile Include="WorkLog.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="console_io.h" />
     <ClInclude Include="DBManager.h" />
     <ClInclude Include="env.h" />
     <ClInclude Include="Project.h" />
