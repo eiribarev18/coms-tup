@@ -165,6 +165,7 @@ bool teamManagementMenu(DBManager &db, User &loggedUser)
 			createTeamMenu(db, loggedUser);
 			break;
 		case 2:
+			chooseTeamToEditMenu(db, loggedUser);
 			break;
 		case 3:
 			deleteTeamMenu(db);
@@ -268,6 +269,86 @@ void deleteTeamMenu(DBManager &db)
 		cout << "Could not delete team" << endl;
 
 	printNewlines();
+}
+
+void chooseTeamToEditMenu(DBManager &db, User &loggedUser)
+{
+	auto teams = db.getAllTeams();
+	int32_t choice;
+
+	listTable(teams);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose team to edit (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (teams.find(choice) == teams.end()) {
+		cout << "No team with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	Team teamToEdit = teams.at(choice);
+
+	while (editTeamMenu(db, loggedUser, teamToEdit)) {};
+}
+
+bool editTeamMenu(DBManager &db, User &loggedUser, Team &teamToEdit)
+{
+	cout << "--- Edit team " << teamToEdit.getName() << " ---" << endl;
+	printNewlines();
+
+	vector<MENU_OPTION> options = {{"Edit name", User::ACCESS_LEVEL::ADMIN},
+								   {"Assign member", User::ACCESS_LEVEL::ADMIN},
+								   {"Remove member", User::ACCESS_LEVEL::ADMIN},
+								   {"Back", User::ACCESS_LEVEL::USER}};
+
+	showMenuOptions(options, loggedUser);
+
+	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
+
+	clearConsole();
+
+	switch (chosenOptionIndex) {
+		case 0:
+			editTeamNameMenu(db, loggedUser, teamToEdit);
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			return false;
+	}
+
+	return true;
+}
+
+void editTeamNameMenu(DBManager &db, User &loggedUser, Team &teamToEdit)
+{
+	string temp;
+
+	cout << "After the prompt the current value will be shown in parenthesis.\n"
+		 << "Leave empty if you don't wish to change it." << endl;
+	printNewlines();
+
+	cout << "Name (" << teamToEdit.getName() << "): ";
+	getline(cin, temp);
+	if (temp.size()) teamToEdit.setName(temp, loggedUser.getID());
+
+	clearConsole();
 }
 
 void createUserMenu(DBManager &db, User &loggedUser)

@@ -23,6 +23,11 @@ bool userManagementMenu(DBManager &db, User &loggedUser);
 
 void createTeamMenu(DBManager &db, User &loggedUser);
 void deleteTeamMenu(DBManager &db);
+void chooseTeamToEditMenu(DBManager &db, User &loggedUser);
+
+bool editTeamMenu(DBManager &db, User &loggedUser, Team &teamToEdit);
+
+void editTeamNameMenu(DBManager &db, User &loggedUser, Team &teamToEdit);
 
 void createUserMenu(DBManager &db, User &loggedUser);
 void deleteUserMenu(DBManager &db);
