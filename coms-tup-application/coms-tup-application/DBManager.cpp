@@ -753,7 +753,7 @@ WorkLog DBManager::getByID(WorkLog &workLog, int32_t id)
 int32_t DBManager::getIDWithCredentials(const std::string &username, const std::string &password)
 {
 	nanodbc::statement statement(connection);
-	
+
 	nanodbc::prepare(statement, NANODBC_TEXT(R"(
 		SELECT Id
 		FROM Users
