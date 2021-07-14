@@ -41,6 +41,7 @@ class DBManager {
 	User getByID(User &user, int32_t id);
 	WorkLog getByID(WorkLog &workLog, int32_t id);
 
+	std::map<int32_t, Team> getAllTeams();
 	std::map<int32_t, User> getAllUsers();
 
 	int32_t getIDWithCredentials(const std::string &username, const std::string &password);
