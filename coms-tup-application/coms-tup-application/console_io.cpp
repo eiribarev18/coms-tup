@@ -125,10 +125,13 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 			while (teamManagementMenu(db, loggedUser)) {};
 			break;
 		case 2:
+			while (projectManagementMenu(db, loggedUser)) {};
 			break;
 		case 3:
+			cout << "This feature is currently unavailable :(" << endl;
 			break;
 		case 4:
+			cout << "This feature is currently unavailable :(" << endl;
 			break;
 		case 5:
 			showLogin = true;
@@ -137,7 +140,45 @@ bool mainMenu(DBManager &db, User &loggedUser, bool &showLogin)
 			return false;
 	}
 
+	return true;
+}
+
+bool projectManagementMenu(DBManager &db, User &loggedUser)
+{
+	vector<MENU_OPTION> options = {{"List all projects", User::ACCESS_LEVEL::USER},
+								   {"List projects assigned to me", User::ACCESS_LEVEL::USER},
+								   {"Create project", User::ACCESS_LEVEL::USER},
+								   {"Select project", User::ACCESS_LEVEL::USER},
+								   {"Delete project", User::ACCESS_LEVEL::USER},
+								   {"Back", User::ACCESS_LEVEL::USER}};
+
+	showMenuOptions(options, loggedUser);
+
+	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
+
 	clearConsole();
+
+	switch (chosenOptionIndex) {
+		case 0:
+			listTable<Project>(bind(&DBManager::getAllProjects, &db));
+			printNewlines();
+			break;
+		case 1:
+			listTable<Project>(bind(&DBManager::getProjectsAssignedToUser, &db, loggedUser));
+			printNewlines();
+			break;
+		case 2:
+			createProjectMenu(db, loggedUser);
+			break;
+		case 3:
+			chooseProjectToEditMenu(db, loggedUser);
+			break;
+		case 4:
+			deleteProjectMenu(db, loggedUser);
+			break;
+		case 5:
+			return false;
+	}
 
 	return true;
 }
@@ -210,6 +251,262 @@ bool userManagementMenu(DBManager &db, User &loggedUser)
 	}
 
 	return true;
+}
+
+void createProjectMenu(DBManager &db, User &loggedUser)
+{
+	Project newProject(loggedUser.getID(), db);
+	string temp;
+
+	cout << "--- New project ---" << endl;
+	printNewlines();
+
+	cout << "Name: ";
+	getline(cin, temp);
+	newProject.setName(temp, loggedUser.getID());
+
+	cout << "Description: ";
+	getline(cin, temp);
+	newProject.setDescription(temp, loggedUser.getID());
+
+	clearConsole();
+
+	if (db.insert(newProject))
+		cout << "Project successfully added!" << endl;
+	else
+		cout << "Failed to add project" << endl;
+
+	printNewlines();
+}
+
+void deleteProjectMenu(DBManager &db, User &loggedUser)
+{
+	auto projects = db.getAllProjects();
+	int32_t choice;
+
+	if (loggedUser.getAccessLevel() < User::ACCESS_LEVEL::ADMIN) {
+		for (auto it = projects.begin(); it != projects.end();) {
+			if (it->second.getCreatedBy() != loggedUser.getID())
+				it = projects.erase(it);
+			else
+				it++;
+		}
+	}
+
+	listTable(projects);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose project to delete (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (projects.find(choice) == projects.end()) {
+		cout << "Cannot delete project with ID " << choice << ".\n"
+			 << "It doesn't exist or you don't have permission to perform this action" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	if (db.deleteByID(projects.at(choice)))
+		cout << "Project deleted successfully!" << endl;
+	else
+		cout << "Could not delete project" << endl;
+
+	printNewlines();
+}
+
+void chooseProjectToEditMenu(DBManager &db, User &loggedUser)
+{
+	auto projects = db.getAllProjects();
+	int32_t choice;
+
+	listTable(projects);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose project to select (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (projects.find(choice) == projects.end()) {
+		cout << "No project with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	Project projectToEdit = projects.at(choice);
+
+	while (editProjectMenu(db, loggedUser, projectToEdit)) {};
+}
+
+bool editProjectMenu(DBManager &db, User &loggedUser, Project &projectToEdit)
+{
+	const bool doesNotOwnProject = loggedUser.getID() != projectToEdit.getCreatedBy();
+
+	cout << "--- Edit project " << projectToEdit.getName() << " ---" << endl;
+	printNewlines();
+
+	vector<MENU_OPTION> options = {
+		{"Edit name", doesNotOwnProject ? User::ACCESS_LEVEL::ADMIN : User::ACCESS_LEVEL::USER},
+		{"Edit description", doesNotOwnProject ? User::ACCESS_LEVEL::ADMIN : User::ACCESS_LEVEL::USER},
+		{"List assigned teams", User::ACCESS_LEVEL::USER},
+		{"Assign team", doesNotOwnProject ? User::ACCESS_LEVEL::ADMIN : User::ACCESS_LEVEL::USER},
+		{"Dismiss team", doesNotOwnProject ? User::ACCESS_LEVEL::ADMIN : User::ACCESS_LEVEL::USER},
+		{"Back", User::ACCESS_LEVEL::USER}};
+
+	showMenuOptions(options, loggedUser);
+
+	size_t chosenOptionIndex = getMenuOptionChoice(options, loggedUser);
+
+	clearConsole();
+
+	switch (chosenOptionIndex) {
+		case 0:
+			editProjectNameMenu(db, loggedUser, projectToEdit);
+			break;
+		case 1:
+			editProjectDescriptionMenu(db, loggedUser, projectToEdit);
+			break;
+		case 2:
+			listTable<Team>(bind(&DBManager::getAssignedTeams, &db, projectToEdit));
+			printNewlines();
+			break;
+		case 3:
+			assignTeamMenu(db, loggedUser, projectToEdit);
+			break;
+		case 4:
+			dismissTeamMenu(db, loggedUser, projectToEdit);
+			break;
+		case 5:
+			return false;
+	}
+
+	return true;
+}
+
+void editProjectNameMenu(DBManager &db, User &loggedUser, Project &projectToEdit)
+{
+	string temp;
+
+	cout << "After the prompt the current value will be shown in parenthesis.\n"
+		 << "Leave empty if you don't wish to change it." << endl;
+	printNewlines();
+
+	cout << "Name (" << projectToEdit.getName() << "): ";
+	getline(cin, temp);
+	if (temp.size()) projectToEdit.setName(temp, loggedUser.getID());
+
+	clearConsole();
+}
+
+void editProjectDescriptionMenu(DBManager &db, User &loggedUser, Project &projectToEdit)
+{
+	string temp;
+
+	cout << "After the prompt the current value will be shown in parenthesis.\n"
+		 << "Leave empty if you wish to unset it." << endl;
+	printNewlines();
+
+	cout << "Description (" << projectToEdit.getDescription() << "): ";
+	getline(cin, temp);
+	projectToEdit.setDescription(temp, loggedUser.getID());
+
+	clearConsole();
+}
+
+void assignTeamMenu(DBManager &db, User &loggedUser, Project &projectToEdit)
+{
+	auto teams = db.getAllTeams();
+	int32_t choice;
+
+	listTable(teams);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose team to assign (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (teams.find(choice) == teams.end()) {
+		cout << "No team with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	if (db.assignTeam(projectToEdit, teams.at(choice)))
+		cout << "Team assigned successfully!" << endl;
+	else
+		cout << "Could not assign team" << endl;
+
+	printNewlines();
+}
+
+void dismissTeamMenu(DBManager &db, User &loggedUser, Project &projectToEdit)
+{
+	auto teams = db.getAssignedTeams(projectToEdit);
+	int32_t choice;
+
+	listTable(teams);
+	printNewlines();
+
+	while (true) {
+		cout << "Choose team to dismiss (by the ID column): ";
+		try {
+			getUnsignedNumber(choice);
+		}
+		catch (...) {
+			cout << "Invalid input!" << endl;
+			continue;
+		}
+		break;
+	}
+
+	clearConsole();
+
+	if (teams.find(choice) == teams.end()) {
+		cout << "No team with ID " << choice << " exists" << endl;
+		printNewlines();
+
+		return;
+	}
+
+	if (db.dismissTeam(projectToEdit, teams.at(choice)))
+		cout << "Team dismissed successfully!" << endl;
+	else
+		cout << "Could not dismiss team" << endl;
+
+	printNewlines();
 }
 
 void createTeamMenu(DBManager &db, User &loggedUser)
@@ -404,7 +701,7 @@ void dismissTeamMemberMenu(DBManager &db, User &loggedUser, Team &teamToEdit)
 	printNewlines();
 
 	while (true) {
-		cout << "Choose user to assign (by the ID column): ";
+		cout << "Choose user to dismiss (by the ID column): ";
 		try {
 			getUnsignedNumber(choice);
 		}

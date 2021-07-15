@@ -14,9 +14,11 @@ struct TABLE_COLUMN {
 	std::string label;
 };
 
+std::vector<TABLE_COLUMN> getColumnData(const std::map<int32_t, Project> &tableRows);
 std::vector<TABLE_COLUMN> getColumnData(const std::map<int32_t, Team> &tableRows);
 std::vector<TABLE_COLUMN> getColumnData(const std::map<int32_t, User> &tableRows);
 
+void printItem(const std::vector<TABLE_COLUMN> &tableColumns, const Project &item);
 void printItem(const std::vector<TABLE_COLUMN> &tableColumns, const Team &item);
 void printItem(const std::vector<TABLE_COLUMN> &tableColumns, const User &item);
 
@@ -36,7 +38,7 @@ void listTable(const std::map<int32_t, T> &tableRows)
 	ios initialState(nullptr);
 
 	if (tableRows.empty()) {
-		cout << "There is nothing to list." << endl << endl;
+		cout << "There is nothing to list." << endl;
 		return;
 	}
 

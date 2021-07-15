@@ -1,36 +1,9 @@
-USE [coms-tup-db]
-GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WorkLogs]') AND type in (N'U'))
-DROP TABLE [dbo].[WorkLogs]
-GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UsersTeams]') AND type in (N'U'))
-DROP TABLE [dbo].[UsersTeams]
-GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND type in (N'U'))
-DROP TABLE [dbo].[Users]
-GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TeamsProjects]') AND type in (N'U'))
-DROP TABLE [dbo].[TeamsProjects]
-GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Teams]') AND type in (N'U'))
-DROP TABLE [dbo].[Teams]
-GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Tasks]') AND type in (N'U'))
-DROP TABLE [dbo].[Tasks]
-GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Projects]') AND type in (N'U'))
-DROP TABLE [dbo].[Projects]
-GO
 USE [master]
 GO
 DROP DATABASE [coms-tup-db]
 GO
 CREATE DATABASE [coms-tup-db]
  CONTAINMENT = NONE
- ON  PRIMARY 
-( NAME = N'coms-tup-db', FILENAME = N'<PRFX>\coms-tup-db.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
- LOG ON 
-( NAME = N'coms-tup-db_log', FILENAME = N'<PRFX>\coms-tup-db_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
 GO
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
 begin
@@ -227,6 +200,33 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+CREATE   VIEW [dbo].[vTeamsProjects]
+AS
+SELECT 
+	t.Id AS TeamId,
+	t.[Name] AS TeamName,
+	t.CreatedOn AS TeamCreatedOn,
+	t.CreatedBy AS TeamCreatedBy,
+	t.LastChangedOn AS TeamLastChangedOn,
+	t.LastChangedBy AS TeamLastChangedBy,
+	t.IsDeleted AS TeamIsDeleted,
+	p.Id AS ProjectId,
+	p.[Name] AS ProjectName,
+	p.[Description] AS ProjectDescription,
+	p.CreatedOn AS ProjectCreatedOn,
+	p.CreatedBy AS ProjectCreatedBy,
+	p.LastChangedOn AS ProjectLastChangedOn,
+	p.LastChangedBy AS ProjectLastChangedBy
+FROM Teams t
+INNER JOIN TeamsProjects tp
+ON t.Id = tp.TeamId
+INNER JOIN Projects p
+ON p.Id = tp.ProjectId;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
 CREATE   VIEW [dbo].[vUsersTeams]
 AS
@@ -260,6 +260,8 @@ INSERT [dbo].[Projects] ([Id], [Name], [Description], [CreatedOn], [CreatedBy], 
 GO
 INSERT [dbo].[Projects] ([Id], [Name], [Description], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [IsDeleted]) VALUES (2, N'Intsitrus', N'Portokal', CAST(N'2021-07-11' AS Date), 1, CAST(N'2021-07-11T09:34:02.0000000' AS DateTime2), 1, 0)
 GO
+INSERT [dbo].[Projects] ([Id], [Name], [Description], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [IsDeleted]) VALUES (4, N'Test', N'Testing project', CAST(N'2021-07-14' AS Date), 3, CAST(N'2021-07-14T18:20:33.0000000' AS DateTime2), 3, 0)
+GO
 SET IDENTITY_INSERT [dbo].[Projects] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Tasks] ON 
@@ -274,11 +276,13 @@ INSERT [dbo].[Teams] ([Id], [Name], [CreatedOn], [CreatedBy], [LastChangedOn], [
 GO
 SET IDENTITY_INSERT [dbo].[Teams] OFF
 GO
+INSERT [dbo].[TeamsProjects] ([TeamId], [ProjectId]) VALUES (1, 1)
+GO
 SET IDENTITY_INSERT [dbo].[Users] ON 
 GO
 INSERT [dbo].[Users] ([Id], [Username], [Password], [FirstName], [LastName], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [AccessLevel], [IsDeleted]) VALUES (1, N'admin', N'adminpass', N'Panelcho', N'Adminov', CAST(N'2021-07-11' AS Date), 2, CAST(N'2021-07-11T07:48:22.0000000' AS DateTime2), 2, 1, 0)
 GO
-INSERT [dbo].[Users] ([Id], [Username], [Password], [FirstName], [LastName], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [AccessLevel], [IsDeleted]) VALUES (2, N'root', N'rootpass', N'The One', N'Above', CAST(N'2021-07-13' AS Date), 2, CAST(N'2021-07-13T08:22:22.0000000' AS DateTime2), 2, 2, 0)
+INSERT [dbo].[Users] ([Id], [Username], [Password], [FirstName], [LastName], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [AccessLevel], [IsDeleted]) VALUES (2, N'root', N'darvo s koreni', N'The One', N'Above', CAST(N'2021-07-13' AS Date), 2, CAST(N'2021-07-13T08:22:22.0000000' AS DateTime2), 2, 2, 0)
 GO
 INSERT [dbo].[Users] ([Id], [Username], [Password], [FirstName], [LastName], [CreatedOn], [CreatedBy], [LastChangedOn], [LastChangedBy], [AccessLevel], [IsDeleted]) VALUES (3, N'mitko', N'not secure', N'Dimitko', N'Trimitko', CAST(N'2021-07-13' AS Date), 1, CAST(N'2021-07-14T13:28:06.0000000' AS DateTime2), 1, 0, 0)
 GO

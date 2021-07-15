@@ -606,6 +606,62 @@ bool DBManager::dismissTeamMember(const Team &team, const User &user)
 	return true;
 }
 
+bool DBManager::assignTeam(const Project &project, const Team &team)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			INSERT INTO TeamsProjects
+				(TeamId, ProjectId)
+			VALUES
+				(?, ?);
+		)"));
+
+		auto bindTemp0 = team.getID();
+		auto bindTemp1 = project.getID();
+
+		statement.bind(0, &bindTemp0);
+		statement.bind(1, &bindTemp1);
+
+		statement.execute();
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool DBManager::dismissTeam(const Project &project, const Team &team)
+{
+	try {
+		nanodbc::statement statement(connection);
+
+		nanodbc::prepare(statement, NANODBC_TEXT(R"(
+			DELETE FROM TeamsProjects
+			WHERE
+				TeamId = ?
+				AND ProjectId = ?;
+		)"));
+
+		auto bindTemp0 = team.getID();
+		auto bindTemp1 = project.getID();
+
+		statement.bind(0, &bindTemp0);
+		statement.bind(1, &bindTemp1);
+
+		statement.execute();
+	}
+	catch (exception &e) {
+		cerr << e.what() << endl;
+		return false;
+	}
+
+	return true;
+}
+
 Project DBManager::getByID(Project &project, int32_t id)
 {
 	try {
@@ -816,7 +872,43 @@ WorkLog DBManager::getByID(WorkLog &workLog, int32_t id)
 	}
 }
 
-std::map<int32_t, Team> DBManager::getAllTeams()
+map<int32_t, Project> DBManager::getAllProjects()
+{
+	map<int32_t, Project> projects;
+
+	nanodbc::statement statement(connection);
+
+	nanodbc::prepare(statement, NANODBC_TEXT(R"(
+		SELECT
+			Id,
+			[Name],
+			CreatedOn,
+			CreatedBy,
+			LastChangedOn,
+			LastChangedBy,
+			[Description]
+		FROM Projects
+		WHERE IsDeleted = 0;
+	)"));
+
+	auto resSet = statement.execute();
+
+	while (resSet.next()) {
+		auto id = resSet.get<int32_t>(0);
+		const auto &name = resSet.get<string>(1);
+		auto createdOn = resSet.get<nanodbc::timestamp>(2);
+		auto createdBy = resSet.get<int32_t>(3);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(4);
+		auto lastChangedBy = resSet.get<int32_t>(5);
+		const auto &description = resSet.get<string>(6, "");
+
+		projects.emplace(id, Project{*this, id, name, description, createdOn, createdBy, lastChangedOn, lastChangedBy});
+	}
+
+	return projects;
+}
+
+map<int32_t, Team> DBManager::getAllTeams()
 {
 	map<int32_t, Team> teams;
 
@@ -951,6 +1043,90 @@ map<int32_t, User> DBManager::getMembersOfTeam(const Team &team)
 	}
 
 	return members;
+}
+
+map<int32_t, Project> DBManager::getProjectsAssignedToUser(const User &user)
+{
+	map<int32_t, Project> projects;
+
+	nanodbc::statement statement(connection);
+
+	nanodbc::prepare(statement, NANODBC_TEXT(R"(
+		SELECT
+			p.Id,
+			p.[Name],
+			p.CreatedOn,
+			p.CreatedBy,
+			p.LastChangedOn,
+			p.LastChangedBy,
+			p.[Description]
+		FROM Projects p
+		INNER JOIN TeamsProjects tp
+		ON p.Id = tp.ProjectId
+		INNER JOIN UsersTeams ut
+		ON tp.TeamId = ut.TeamId
+		WHERE
+			UserId = ?
+			AND p.IsDeleted = 0;
+	)"));
+
+	auto bindTemp0 = user.getID();
+
+	statement.bind(0, &bindTemp0);
+
+	auto resSet = statement.execute();
+
+	while (resSet.next()) {
+		auto id = resSet.get<int32_t>(0);
+		const auto &name = resSet.get<string>(1);
+		auto createdOn = resSet.get<nanodbc::timestamp>(2);
+		auto createdBy = resSet.get<int32_t>(3);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(4);
+		auto lastChangedBy = resSet.get<int32_t>(5);
+		const auto &description = resSet.get<string>(6, "");
+
+		projects.emplace(id, Project{*this, id, name, description, createdOn, createdBy, lastChangedOn, lastChangedBy});
+	}
+
+	return projects;
+}
+
+std::map<int32_t, Team> DBManager::getAssignedTeams(const Project &project)
+{
+	map<int32_t, Team> teams;
+
+	nanodbc::statement statement(connection);
+
+	nanodbc::prepare(statement, NANODBC_TEXT(R"(
+		SELECT
+			TeamId,
+			TeamName,
+			TeamCreatedOn,
+			TeamCreatedBy,
+			TeamLastChangedOn,
+			TeamLastChangedBy
+		FROM vTeamsProjects
+		WHERE ProjectId = ?;
+	)"));
+
+	auto bindTemp0 = project.getID();
+
+	statement.bind(0, &bindTemp0);
+
+	auto resSet = statement.execute();
+
+	while (resSet.next()) {
+		auto id = resSet.get<int32_t>(0);
+		const auto &name = resSet.get<string>(1);
+		auto createdOn = resSet.get<nanodbc::timestamp>(2);
+		auto createdBy = resSet.get<int32_t>(3);
+		auto lastChangedOn = resSet.get<nanodbc::timestamp>(4);
+		auto lastChangedBy = resSet.get<int32_t>(5);
+
+		teams.emplace(id, Team{*this, id, name, createdOn, createdBy, lastChangedOn, lastChangedBy});
+	}
+
+	return teams;
 }
 
 int32_t DBManager::getIDWithCredentials(const std::string &username, const std::string &password)
