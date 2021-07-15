@@ -12,6 +12,12 @@ class DBManager;
 #include "WorkLog.h"
 
 /**
+* @file DBManager.h
+* 
+* @brief Declaration of the DBManager class
+*/
+
+/**
  * @brief The DBManager class is responsible for all interactions between the application and the database.
  * 
  * It acts as a wrapper for #connection, providing member functions with all queries needed by the program.
@@ -352,7 +358,7 @@ class DBManager {
 	* @note The time is in UTC and does not include timezone information.
 	* @note The output's @c fract field is set to 0.
 	* 
-	* @param includeTime If set to false, the @c hour, @c min and @sec fields are set to 0.
+	* @param includeTime If set to false, the @c hour, @c min and @c sec fields are set to 0.
 	* 
 	* @return A nanodbc::timestamp containing the requested date.
 	*/
